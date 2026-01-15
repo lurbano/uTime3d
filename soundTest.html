@@ -1,0 +1,55 @@
+<html>
+<head>
+  <title>X3DOM Sound Test</title>
+  <script src="https://www.x3dom.org/download/dev/x3dom.js"></script>
+  <link rel="stylesheet" href="https://www.x3dom.org/download/x3dom.css"/>
+</head>
+
+<body>
+<h1>Click the sphere to play sound</h1>
+
+<x3d width="500px" height="400px">
+  <scene>
+
+    <Transform id="theSphere">
+      <!-- clickable object -->
+      <Shape >
+        <Appearance>
+          <Material diffuseColor="1 0 0"/>
+        </Appearance>
+        <Sphere />
+      </Shape>
+
+      <!-- <TouchSensor id="touch"/> -->
+
+      <!-- sound attached to object -->
+      <Sound maxFront="20" maxBack="20">
+        <AudioClip
+          id="audio"
+          url="./sounds/under-water-splash-3.mp3"
+          loop="true"/>
+      </Sound>
+    </Transform>
+
+  </scene>
+</x3d>
+
+<script>
+  // document.getElementById("touch").addEventListener("isActive", e => {
+  //   console.log(e)
+  //   if (e.detail.value) {
+  //     console.log("playing")
+  //     document.getElementById("audio")
+  //       .setAttribute("startTime", Date.now() / 1000);
+  //   }
+  // });
+
+  document.getElementById("theSphere").addEventListener("click", function(){
+    console.log("playing");
+    document.getElementById("audio")
+        .setAttribute("startTime", Date.now() / 1000);
+  })
+</script>
+
+</body>
+</html>

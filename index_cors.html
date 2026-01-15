@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>x3dom js test</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     
+   </head> 
+   <body> 
+     <p> 
+       This is my first html page with:
+       <ul>
+        <li>Primatives</li>
+        <ul>
+          <li>Sphere</li>
+          <ul>
+            <li>.setColor(10, 150, 255)</li>
+            <li>.translate(-2.5,0,0)</li>
+          </ul>
+          <li>Cone</li>
+          <li>Cylinder</li>
+          <ul>
+            <li>click to change color (addEventListener)</li>
+          </ul>
+          <li>box</li>
+          <ul>
+            <li>.addTexture("./images/Gouache-bleue-blue.png")</li>
+            <li>.rotate(0,30,30) (about x,y,z axes in degrees)</li>
+          </ul>
+
+          <li>line (xAxis)</li>
+          <ul>
+            <li>setEmissiveColor</li>
+          </ul>
+          <li>axes</li>
+
+        </ul>
+       </ul>
+     </p> 
+
+     <input id="resetView" type="button" value="resetView" >
+
+     <input type="button" value="top_cam" onclick="document.getElementById('top_cam').setAttribute('set_bind','true');">
+
+     <div id="x3Spot">
+
+     </div>
+
+     
+	
+     
+    <div>
+      Resources:
+
+      Blue texture: By Emmanuel Boutet - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=1459033">https://commons.wikimedia.org/w/index.php?curid=1459033</a>
+      
+      
+    </div>
+ 
+</body>
+
+
+<script>
+
+  function bindView(id) {
+    document.getElementById(id).setAttribute("set_bind", "true");
+  }
+
+  spot = document.getElementById("x3Spot");
+
+  u3x = new ux3d({
+    width: "800px",
+    height: "500px"
+  });
+
+  view1 = new uViewpoint({
+    description: "StartView"
+  })
+  u3x.add(view1);
+
+  view2 = new uViewpoint({
+    id:"top_cam",
+    description: "top_cam",
+    orientation:"-0.98675 0.16035 0.02462 1.28837",
+    position:"1.36474 9.50507 2.79127",
+    fieldofview: "0.78540",
+    centerofrotation: "0,0,0",
+    znear:"-1",
+    zfar:"-1"
+  });
+  u3x.add(view2); 
+
+  
+  box = new uBox()
+  box.addTexture("./images/Gouache-bleue-blue.png")
+  u3x.add(box)
+
+  //box.transform.div.setAttribute("translation", "3 0 0");
+  box.translate(2.5, 0, 0);
+  //box.rotateZ(30);
+  box.rotate(0,30,30);
+
+  vidBox = new uBox();
+  vidBox.translate(-2.5, 2.5, 0);
+//   vidBox.addVideo("./videos/320533_tiny.mp4")
+  u3x.add(vidBox);
+
+  sphere = new uSphere();
+  sphere.setColor(10, 150, 255);
+  sphere.translate(-2.5,0,0);
+
+
+  u3x.add(sphere);
+
+  cone = new uCone();
+  cone.setColor(255, 150, 10);
+  //cone.rotateAxisAngle(1, 0, 0, 90);
+  
+  u3x.add(cone);
+
+  cylinder = new uCylinder();
+  cylinder.translate(0, 2, 0);
+  u3x.add(cylinder);
+
+
+  
+  
+
+
+  spot.appendChild(u3x.elem);
+
+
+  document.onload = function() {
+      // Handle mouseover event on a shape
+      cylinder.div.addEventListener('click', function(event) {
+              cylinder.setColor(0,200,20)
+          }, false);
+
+ 
+
+      xyzAxes = new uAxes();
+      xyzAxes.translate(0,-2, 0);
+      u3x.add(xyzAxes);
+
+      // resetView.addEventListener("click", function(){
+      //   view1.bind();
+      // })
+
+      document.getElementById("resetView").addEventListener("click", function(){
+        view1.bind();
+      })
+
+  };
+    
+</script>
+
+
+
+
+
+</html>
+

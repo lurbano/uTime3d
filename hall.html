@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>Timeline Hall</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     
+   </head> 
+   <body> 
+     <p> 
+       Timeline Hall
+     </p> 
+
+     <!-- Views -->
+     <input id="start_View" type="button" value="Start" class="view">
+     <input id="door_View" type="button" value="Door" class="view">
+     <input id="top_View" type="button" value="Top" class="view">
+
+     <div id="x3Spot"></div>
+	
+     
+    <div>
+      Resources:
+
+      <ul>
+        <li>Blue texture: By Emmanuel Boutet - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=1459033">https://commons.wikimedia.org/w/index.php?curid=1459033</a></li>
+        <li>Shark vid: Video by <a href="https://pixabay.com/users/yocchi09-22039991/?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=320533">Yocchi09</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=320533">Pixabay</a></li>
+        <li>Under Water Splash 3 by Hampusnoren -- <a href="https://freesound.org/s/147180/">https://freesound.org/s/147180/</a> -- License: Attribution 4.0</li>
+      </ul>
+      
+    </div>
+ 
+</body>
+
+
+<script>
+
+    wallThickness = 0.25;
+    hallLength = 10;
+    hallHeight = 3;
+    hallWidth = 4;
+
+    railUp = 0.5;
+
+    tileLength = 0.6;
+    tileHeight = 1.0;
+    
+    // Set up 3d element
+    u3x = new ux3d({
+        width: "800px",
+        height: "500px"
+    });
+    document.getElementById("x3Spot").appendChild(u3x.elem);
+
+
+    // Walls 
+    eastWall_z = -hallWidth/2
+    eastWall = addBox(hallLength, hallHeight, wallThickness);
+    eastWall.translate(0,0,eastWall_z)
+    eastWall.setColor(0, 20, 255);
+    u3x.add(eastWall);
+
+    westWall = addBox(hallLength, hallHeight, wallThickness);
+    westWall.translate(0, 0, hallWidth/2);
+    westWall.setColor(50, 20, 255);
+    u3x.add(westWall);
+
+    floor = addBox(hallLength, wallThickness, hallWidth);
+    floor.translate(0, -hallHeight/2, 0)
+    u3x.add(floor);
+
+    // ceiling = addBox(hallLength, wallThickness, hallWidth);
+    // ceiling.translate(0, hallHeight/2, 0)
+    // u3x.add(ceiling);
+
+    rail = addBox(hallLength,0.1, 0.1);
+    rail.setColor(200, 0, 0);
+    rail.translate(0,railUp,eastWall_z+wallThickness/2);
+    u3x.add(rail);
+
+    //tiles
+    // t = addBox(tileLength, tileHeight, 0.01);
+    // t.setColor(0,200,0);
+    // t.translate(0,0,wallThickness/2+0.05)
+    // u3x.add(t);
+
+    tiles = [];
+
+    console.log(-hallLength/2, hallLength/2)
+
+    for (let x=tileLength/2-hallLength/2; x<hallLength/2; x+=(tileLength+0.1)){
+        console.log("x:", x)
+        let t = addBox(tileLength, tileHeight, 0.01);
+        t.setColor(0,200,0);
+        t.translate(x,0,eastWall_z+wallThickness/2+0.05)
+        u3x.add(t);
+        tiles.push(t);
+    }
+    tiles[5].setColor(100, 50, 50);
+
+    
+
+    //AXES
+    xyzAxes = new uAxes();
+    xyzAxes.translate(0,-2, 0);
+    u3x.add(xyzAxes);
+
+
+
+    // Views
+    view0 = new uViewpoint({
+        id:"startView",
+        description: "startView",
+        orientation:"0,0,0,0",
+        position:"0, 0, 10",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+
+
+    // <Viewpoint position="-9.99770 -0.19138 0.09652" orientation="0.00994 -0.99991 0.00929 1.56123" 
+	// zNear="3.43249" zFar="18.84728" centerOfRotation="0.00000 0.00000 0.00000" fieldOfView="0.78540" description="startView"></Viewpoint>
+
+
+    view1 = new uViewpoint({
+        id:"doorView",
+        description: "doorView",
+        orientation:"-0.01255 -0.99965 -0.02347 1.30219",
+        position:"-10 0.25 0",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    view2 = new uViewpoint({
+        id:"topView",
+        description: "topView",
+        orientation:"-0.98675 0.16035 0.02462 1.28837",
+        position:"1.36474 9.50507 2.79127",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    u3x.add(view0);
+    u3x.add(view1);
+    u3x.add(view2);
+
+  document.onload = function() {
+
+    viewButtons = document.getElementsByClassName('view');
+    console.log(viewButtons)
+
+    for (let i =0; i<viewButtons.length; i++){
+        let element = viewButtons[i];
+        element.addEventListener("click", function(){
+            vid = element.id.replace("_", "");
+            console.log("vid", vid)
+            document.getElementById(vid).setAttribute("set_bind", 'true');
+        })
+    }
+
+    //end views
+
+    // event listeners   
+      
+  };
+    
+</script>
+
+
+
+
+</html>
+

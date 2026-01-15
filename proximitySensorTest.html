@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>Proximity Test</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     
+   </head> 
+   <body> 
+     <p> 
+       Proximity Sensor Test
+     </p> 
+
+     <!-- Views -->
+     <input id="start_View" type="button" value="Start" class="view">
+     <input id="door_View" type="button" value="Door" class="view">
+     <input id="top_View" type="button" value="Top" class="view">
+
+
+     <div id="x3Spot"></div>
+	
+     
+ 
+</body>
+
+
+<script>
+
+    
+    // Set up 3d element
+    u3x = new ux3d({
+        width: "800px",
+        height: "500px"
+    });
+    document.getElementById("x3Spot").appendChild(u3x.elem);
+
+
+    cube = addBox(2, 2, 2);
+    cube.setColor(0, 20, 255);
+    cube.addProximitySensor(5);
+    cube.proximitySensor.div.addEventListener("enterTime", () => {
+        console.log('Entered Area')
+    })
+    u3x.add(cube);
+
+    console.log(cube.proximitySensor.div);
+
+    function colorChange(){
+        console.log('colorChange')
+    }
+
+    
+
+    //AXES
+    xyzAxes = new uAxes();
+    xyzAxes.translate(0,-2, 0);
+    u3x.add(xyzAxes);
+
+
+
+    view0 = new uViewpoint({
+        id:"doorView",
+        description: "doorView",
+        orientation:"0.01 -1 -0.01 1.5",
+        position:"-10 0.25 0",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    view1 = new uViewpoint({
+        id:"startView",
+        description: "startView",
+        orientation:"0,0,0,0",
+        position:"0, 0, 10",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+
+    view2 = new uViewpoint({
+        id:"topView",
+        description: "topView",
+        orientation:"-0.98675 0.16035 0.02462 1.28837",
+        position:"1.36474 9.50507 2.79127",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    u3x.add(view0);
+    u3x.add(view1);
+    u3x.add(view2);
+
+  document.onload = function() {
+
+    viewButtons = document.getElementsByClassName('view');
+    console.log(viewButtons)
+
+    for (let i =0; i<viewButtons.length; i++){
+        let element = viewButtons[i];
+        element.addEventListener("click", function(){
+            vid = element.id.replace("_", "");
+            console.log("vid", vid)
+            document.getElementById(vid).setAttribute("set_bind", 'true');
+        })
+    }
+
+    //end views
+      
+  };
+    
+</script>
+
+
+
+
+</html>
+

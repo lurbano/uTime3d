@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>x3dom js test</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     
+   </head> 
+   <body> 
+
+    <p>Experiments with web-based 3d: primitive shapes using X3DOM.</p>
+
+     <input type="button" value="Show Axes" id="showAxes">
+     <input type="button" value="Export OpenSCAD" id="exportOpenSCAD">
+     <br>
+
+     <div id="viewButtonArea"></div>
+
+     <div id="x3Spot"></div>
+
+     <p>
+      Tests:
+      <ul>
+        <li><a href="navTest.html">navTest.html</a>: Navigation test</li>
+        <li><a href="hall.html">hall.html</a>:Timeline hallway.</li>
+        <li><a href="wall.html">wall.html</a>: shark wall proto.</li>
+      </ul>
+     </p>
+
+     <p> 
+       u3XDOM:
+       <ul>
+        <li>Primatives</li>
+        <ul>
+          <li>Sphere</li>
+          <ul>
+            <li>.setColor(10, 150, 255)</li>
+            <li>.translate(-2.5,0,0)</li>
+            <li>.addSound('./sounds/under-water-splash-3.mp3')</li>
+            <li>sphere.setClickListener(sphere): event listener to play sound when sphere is clicked.</li>
+          </ul>
+          <li>Cone</li>
+          <ul>
+            <li>.setColor(255, 150, 10): set color.</li>
+          </ul>
+          <li>Cylinder</li>
+          <ul>
+            <li>click to change color (addEventListener)</li>
+          </ul>
+          <li>box</li>
+          <ul>
+            <li>.addTexture("./images/Gouache-bleue-blue.png")</li>
+            <li>.rotate(0,30,30) (about x,y,z axes in degrees)</li>
+          </ul>
+          <li>vidBox (box with video texture)</li>
+          <ul>
+            <li>.addVideo("./videos/320533_tiny.mp4")</li>
+            <li>.video.setClickListener(vidBox): event listener added so play when box is clicked.</li>
+          </ul>
+          <li>line (triangle)</li>
+          <ul>
+            <li>.setEmissiveColor</li>
+          </ul>
+          <li>axes</li>
+          <ul>
+            <li>uAxes</li>
+            <ul>
+              <li>switchVisibility</li>
+            </ul>
+            
+          </ul>
+
+        </ul>
+       </ul>
+     </p> 
+
+
+
+     
+	
+     
+    <div>
+      Resources:
+      <ul>
+        <li>Blue texture: By Emmanuel Boutet - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=1459033">https://commons.wikimedia.org/w/index.php?curid=1459033</a></li>
+        <li>Shark vid: Video by <a href="https://pixabay.com/users/yocchi09-22039991/?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=320533">Yocchi09</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=video&utm_content=320533">Pixabay</a></li>
+        <li>Under Water Splash 3 by Hampusnoren -- <a href="https://freesound.org/s/147180/">https://freesound.org/s/147180/</a> -- License: Attribution 4.0</li>
+      </ul>
+
+      Refs:
+      <ul>
+        <li>
+          Repo: <a href="https://github.com/lurbano/u3D"> https://github.com/lurbano/u3D</a> : u3D/X3DOM/html/
+        </li>
+        <li>
+          API: <a href="https://doc.x3dom.org/author/index.html">X3DOM Scene Author API</a>
+        </li>
+        <li>
+          Node Reference: <a href="https://doc.x3dom.org/author/nodes.html">X3DOM Nodes</a>
+        </li>
+      </ul>
+      
+      
+      
+    </div>
+ 
+</body>
+
+
+<script>
+
+  spot = document.getElementById("x3Spot");
+
+  u3x = new ux3d({
+    width: "800px",
+    height: "500px"
+  });
+
+  //VIEWS
+  view1 = new uViewpoint({
+    description: "StartView"
+  })
+
+  u3x.add(view1);
+  view1.addButton(document.getElementById("viewButtonArea"));
+
+  view2 = new uViewpoint({
+    id:"top_cam",
+    description: "top_cam",
+    orientation:"-0.98675 0.16035 0.02462 1.28837",
+    position:"1.36474 9.50507 2.79127",
+    fieldofview: "0.78540",
+    centerofrotation: "0,0,0",
+    znear:"-1",
+    zfar:"-1"
+  });
+  u3x.add(view2); 
+  view2.addButton(document.getElementById("viewButtonArea"));
+
+  //BOXES
+  box = new uBox()
+  box.addTexture("./images/Gouache-bleue-blue.png")
+
+  u3x.add(box)
+
+  box.translate(2.5, 0, 0);
+  box.rotate(0,30,30);
+
+  // VIDEO BOX
+  vidBox = new uBox();
+  vidBox.translate(-2.5, 2.5, 0);
+  vidBox.addVideo("./videos/320533_tiny.mp4")
+
+  u3x.add(vidBox);
+
+  //SPHERE
+  sphere = new uSphere();
+  sphere.setColor(10, 150, 255);
+  sphere.translate(-2.5,0,0);
+  sphere.addSound('./sounds/under-water-splash-3.mp3')
+
+  u3x.add(sphere);
+
+  //CONE
+  cone = new uCone();
+  cone.setColor(255, 150, 10);
+  
+  u3x.add(cone);
+
+  //CYLINDER
+  cylinder = new uCylinder();
+  cylinder.translate(0, 2, 0);
+  u3x.add(cylinder);
+
+
+  //AXES
+  xyzAxes = new uAxes();
+  xyzAxes.translate(0,-2, 0);
+  u3x.add(xyzAxes);
+
+  //LINE
+  line = addLine([[-3,-2,0],[-1,-2,0],[-2,-1.5,0],[-3,-2,0]])
+  line.setEmissiveColor(20,200,0)
+  u3x.add(line);
+
+  spot.appendChild(u3x.elem);
+
+
+  document.onload = function() {
+      // Handle mouseover event on a shape
+      cylinder.div.addEventListener('click', function(event) {
+              cylinder.setColor(0,200,20)
+          }, false);
+
+
+      // document.getElementById("resetView").addEventListener("click", function(){
+      //   view1.bind();
+      // })
+
+      document.getElementById("showAxes").addEventListener("click", function(){
+        xyzAxes.switchVisibility();
+      })
+
+      vidBox.video.setClickListener(vidBox);
+      
+      sphere.sound.setClickListener(sphere);
+
+      document.getElementById("exportOpenSCAD").addEventListener("click", function(){
+        console.log('exporting');
+        u3x.toOpenSCAD();
+      })
+
+  };
+    
+</script>
+
+
+
+
+
+</html>
+

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>x3dom js test</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     
+   </head> 
+   <body> 
+     <p> 
+       This is my first html page with some 3d objects. 
+     </p> 
+
+     <div id="x3Spot">
+        here
+     </div>
+	
+     <x3d width="500px" height="400px" style="width: 500px; height: 400px;"> 
+	   <scene id="mainScene" render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" pickmode="idBuf" dopickpass="true" shadowobjectidmapping=""> 
+
+        <!-- <shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"> 
+		   <appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"> 
+			 <material diffusecolor="1 0 0" ambientintensity="0.2" emissivecolor="0,0,0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material> 
+		   </appearance> 
+		   <box solid="true" ccw="true" usegeocache="true" lit="true" size="2,2,2" hashelpercolors="false"></box> 
+		</shape>  -->
+ 
+
+        <transform translation="-3 0 0" render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" center="0,0,0" rotation="0,0,0,0" scale="1,1,1" scaleorientation="0,0,0,0">  
+            <shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"> 
+                <appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"> 
+                <material diffusecolor=".1 1 0" ambientintensity="0.2" emissivecolor="0,0,0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material> 
+            </appearance> 
+            
+                <IndexedFaceSet ccw="true"
+                        colorIndex="0, 1, 0, -1, 0, 2, 0, -1"
+                        colorPerVertex="true"
+                        convex="true"
+                        coordIndex="0, 1, 3, -1, 0, 2, 3, -1"
+                        creaseAngle="0.0"
+                        normalIndex="0, 1, 3, -1, 0, 2, 3, -1"
+                        normalPerVertex="true"
+                        solid="true>
+                    <Color color="0.2 0.2 0.2, 0.4 0.4 0.4, 0.6 0.6 0.6"/>
+                    <Coordinate point="0 0 0, 1 0 0, 1 0 -1, 0.5 1 0"/>
+                    <Normal vector="0 0 1, 0 0 1, 0 0 1, 0 0 1"/>
+                </IndexedFaceSet>
+            </shape>
+        </transform> 
+
+		<transform translation="3 0 0" render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" center="0,0,0" rotation="0,0,0,0" scale="1,1,1" scaleorientation="0,0,0,0"> 
+		  <shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"> 
+			 <appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"> 
+			   <material diffusecolor="0 0 1" ambientintensity="0.2" emissivecolor="0,0,0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material> 
+			 </appearance> 
+			 <sphere solid="true" ccw="true" usegeocache="true" lit="true" radius="1" subdivision="24,24"></sphere> 
+		  </shape> 
+		</transform> 
+        
+        </scene> 
+
+	    <canvas class="x3dom-canvas" id="x3dom-canvas" style="width: 500px; height: 400px;" width="500" height="400" tabindex="0"></canvas>
+
+    </x3d> 
+    
+ 
+</body>
+
+
+<script>
+
+    myScene = document.getElementById("mainScene");
+
+    newShape = document.createElement("shape");
+    newShape.setAttribute("render", true);
+    newShape.setAttribute("visible", true);
+    newShape.setAttribute("bboxcenter", "0 0 0");
+
+    newAp = document.createElement("appearance");
+
+      newMat = document.createElement("material");
+      newMat.setAttribute("diffusecolor", "1 0 0");
+    newAp.appendChild(newMat);
+
+    newBox = document.createElement("box");
+    newBox.setAttribute("solid", true);
+    newBox.setAttribute("size", "2 2 2");
+
+    newShape.appendChild(newAp);
+    newShape.appendChild(newBox);
+
+    myScene.appendChild(newShape);
+    
+</script>
+
+
+</html>
