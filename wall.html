@@ -5,34 +5,12 @@
      <title>Shark Wall</title> 
      <script type="text/javascript" src="./x3dom.js"> </script> 
      <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
-     <script type="text/javascript" src="./uX3DOM.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./uTime3d.css"> 
+     <script type="text/javascript" src="./uTime3d.js"> </script> 
      
    </head> 
    <body> 
-     <p> 
-       This is my first html page with:
-       <ul>
-        <li>Primatives</li>
-        <ul>
-          <li>Sphere</li>
-          <ul>
-            <li>.setColor(10, 150, 255)</li>
-            <li>.translate(-2.5,0,0)</li>
-          </ul>
-          <li>Cone</li>
-          <li>Cylinder</li>
-          <ul>
-            <li>click to change color (addEventListener)</li>
-          </ul>
-          <li>box</li>
-          <ul>
-            <li>.addTexture("./images/Gouache-bleue-blue.png")</li>
-            <li>.rotate(0,30,30) (about x,y,z axes in degrees)</li>
-          </ul>
-
-        </ul>
-       </ul>
-     </p> 
+     
 
      <input id="start_View" type="button" value="Start" class="view">
      <input id="door_View" type="button" value="Door" class="view">
@@ -65,7 +43,7 @@
 
   spot = document.getElementById("x3Spot");
 
-  u3x = new ux3d({
+  u3x = new ux3d('x3Spot', {
     width: "800px",
     height: "500px"
   });

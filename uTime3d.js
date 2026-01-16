@@ -12,7 +12,7 @@ function setAttributes(elem, props){
 }
 
 class ux3d {
-    constructor(params={}){
+    constructor(hostDivId = '', params={}){
         
         let defaults = {
             width: "400px",
@@ -32,7 +32,17 @@ class ux3d {
         this.primitives = [];
         this.transforms = [];
 
+        this.hostDiv = document.getElementById(hostDivId);
+        this.hostDiv.appendChild(this.elem);
+
+        this.addOpenscadControls();
+
     }
+
+    // insertInto(hostDivId){
+    //     this.hostDiv = document.getElementById(hostDivId);
+    //     this.hostDiv.appendChild(this.elem);
+    // }
 
     add(obj){
         this.primitives.push(obj);
@@ -43,6 +53,34 @@ class ux3d {
 
     setNavigationMode(navMode){
         this.scene.setNavigationMode(navMode);
+    }
+
+    addOpenscadControls() {
+        console.log("adding openscad controls")
+        //insert them after divid
+        this.openscadButton = document.createElement('input');
+        this.openscadButton.setAttribute('type', 'button')
+        this.openscadButton.setAttribute("value", "Export OpenSCAD");
+
+        this.openscadScale = document.createElement('input');
+        this.openscadScale.setAttribute('type', 'number');
+        this.openscadScale.setAttribute('value', 10);
+
+
+        this.openscadOutput = document.createElement("div");
+        this.openscadOutput.classList.add("openScadOutput");
+        //let div = this.elem;
+        this.hostDiv.after(this.openscadButton);
+        this.openscadButton.after(this.openscadScale);
+        this.openscadScale.after(this.openscadOutput);
+
+        this.openscadButton.addEventListener("click", () => {
+            let scale = this.openscadScale.value;
+            let scadCode = this.toOpenSCAD(scale=scale);
+            this.openscadOutput.innerText = scadCode;
+        })
+        
+
     }
 
     toOpenSCAD(scale = 10){
@@ -66,6 +104,7 @@ class ux3d {
             }
         }
         console.log("OpenScad:", scadString);
+        return scadString;
     }
 }
 
