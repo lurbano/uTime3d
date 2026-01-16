@@ -2,32 +2,26 @@
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=windows-1252">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-     <title>Basic Cube</title> 
+     <title>Timeline Hall</title> 
      <script type="text/javascript" src="./x3dom.js"> </script> 
      <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
      <script type="text/javascript" src="./uX3DOM.js"> </script> 
      
    </head> 
    <body> 
-     <p> 
-       Basic cube (use as template)
-     </p> 
+
 
      <!-- Views -->
      <input id="start_View" type="button" value="Start" class="view">
      <input id="door_View" type="button" value="Door" class="view">
      <input id="top_View" type="button" value="Top" class="view">
 
-
      <div id="x3Spot"></div>
-	
-     
  
 </body>
 
 
 <script>
-
     
     // Set up 3d element
     u3x = new ux3d({
@@ -37,11 +31,18 @@
     document.getElementById("x3Spot").appendChild(u3x.elem);
 
 
-    cube = addBox(2, 2, 2);
-    cube.setColor(0, 20, 255);
-    u3x.add(cube);
+    // Add shapes here:
 
-    
+    //cube
+    box = new uBox(2, 2, 2);
+    box.setColor(0, 200, 0);
+    u3x.add(box);
+
+
+
+
+
+    // leave the rest alone for now
 
     //AXES
     xyzAxes = new uAxes();
@@ -50,18 +51,8 @@
 
 
 
+    // Views
     view0 = new uViewpoint({
-        id:"doorView",
-        description: "doorView",
-        orientation:"0.01 -1 -0.01 1.5",
-        position:"-10 0.25 0",
-        fieldofview: "0.78540",
-        centerofrotation: "0,0,0",
-        znear:"-1",
-        zfar:"-1"
-    });
-
-    view1 = new uViewpoint({
         id:"startView",
         description: "startView",
         orientation:"0,0,0,0",
@@ -71,6 +62,17 @@
         znear:"-1",
         zfar:"-1"
     })
+
+    view1 = new uViewpoint({
+        id:"doorView",
+        description: "doorView",
+        orientation:"-0.01255 -0.99965 -0.02347 1.30219",
+        position:"-10 0.25 0",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
 
     view2 = new uViewpoint({
         id:"topView",
@@ -89,6 +91,7 @@
 
   document.onload = function() {
 
+    //making the view buttons work
     viewButtons = document.getElementsByClassName('view');
     console.log(viewButtons)
 
@@ -100,8 +103,6 @@
             document.getElementById(vid).setAttribute("set_bind", 'true');
         })
     }
-
-    //end views
       
   };
     
