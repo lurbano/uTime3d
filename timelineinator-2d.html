@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <title>Timeline Maker</title> 
+    <script type="text/javascript" src="./x3dom.js"> </script> 
+    <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+    <link rel="stylesheet" type="text/css" href="./uTime3d.css"> 
+    <script type="text/javascript" src="./uTime3d.js"> </script> 
+    <script type="text/javascript" src="./uTimeline.js"> </script> 
+
+    <style>
+        #x3Spot {
+            width: 500px;
+            height: 500px;
+        }
+        #workArea {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            left: 520px;
+        }
+
+        #area2d {
+            height: 100px;
+            border: 1px solid blue;
+        }
+        #area3d {
+            /* height: 50px; */
+            width: 510px;
+            border: 1px solid red;
+        }
+        
+    </style>   
+
+</head> 
+
+<body> 
+
+    <div id="area2d"></div>
+
+    <div id="workArea">
+        
+
+    </div>
+
+    
+    <div id="area3d">
+        3d Area
+        <!-- Views -->
+    <input id="start_View" type="button" value="Start" class="view">
+    <input id="door_View" type="button" value="Door" class="view">
+    <input id="top_View" type="button" value="Top" class="view">
+
+        <div id="x3Spot"></div>
+    </div>
+    
+
+
+</body>
+
+
+<script>
+
+    timeline = new uTimeline();
+    timeline.draw2d("area2d", {
+        width: "800px",
+        x: "20px",
+        y: "20px"
+    });
+    console.log("add controls")
+    timeline.addControls("workArea")
+    
+ 
+    
+
+
+
+
+
+    // leave the rest alone for now
+
+
+
+
+
+    
+
+  document.onload = function() {
+
+    //making the view buttons work
+    viewButtons = document.getElementsByClassName('view');
+    
+    for (let i =0; i<viewButtons.length; i++){
+        let element = viewButtons[i];
+        element.addEventListener("click", function(){
+            vid = element.id.replace("_", "");
+            console.log("vid", vid)
+            document.getElementById(vid).setAttribute("set_bind", 'true');
+        })
+    }
+
+      
+  };
+    
+</script>
+
+
+
+
+</html>
+
