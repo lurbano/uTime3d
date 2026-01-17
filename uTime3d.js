@@ -1,5 +1,4 @@
 
-console.log("x")
 
 function setAttributes(elem, props){
     // console.log("props", props);
@@ -56,7 +55,6 @@ class ux3d {
     }
 
     addOpenscadControls() {
-        console.log("adding openscad controls")
         //insert them after divid
         this.openscadButton = document.createElement('input');
         this.openscadButton.setAttribute('type', 'button')
