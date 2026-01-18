@@ -14,7 +14,7 @@ class uTimeline {
         this.eventsList = [];
         this.periodsList = [];
 
-        this.fullTime = new timelinePeriod(this.startTime, this.endTime, this.description);
+        this.fullTime = new timelinePeriod(this.startTime, this.endTime, this.description, this);
         this.periodsList.push(this.fullTime);
 
     }
@@ -30,10 +30,18 @@ class uTimeline {
 
         this.eventsListArea = document.createElement("div");
         this.eventsListArea.innerHTML = "Events"
-        this.periodsListArea = document.createElement("div");
-        this.periodsListArea.innerHTML = "Periods"
 
-        this.controlsElement.appendChild(this.periodsListArea);
+        this.periodsArea = document.createElement("div")
+        this.periodsListArea = document.createElement("div");
+        this.addPeriodButton = document.createElement("input");
+        this.addPeriodButton.setAttribute("type", "button");
+        this.addPeriodButton.setAttribute("value", "Add Period");
+        this.addPeriodButton.addEventListener("click", () => {this.addPeriod()});
+        this.periodsArea.innerHTML = "Periods"
+        this.periodsArea.appendChild(this.addPeriodButton);
+        this.periodsArea.appendChild(this.periodsListArea);
+
+        this.controlsElement.appendChild(this.periodsArea);
         this.controlsElement.appendChild(this.eventsListArea);
         
         console.log(this.controlsElement);
@@ -48,6 +56,15 @@ class uTimeline {
 
     }
 
+    addPeriod(){
+        
+        console.log("adding Period")
+        let p = new timelinePeriod(this.startTime, this.endTime, "", this);
+        this.periodsList.push(p);
+        this.timeline2d.drawPeriods();
+        
+    }
+
     draw2d(params={}, svgParams={}){
         //params["startTime"] = this.startTime;
         //params["endTime"] = this.endTime;
@@ -55,7 +72,11 @@ class uTimeline {
 
         this.timeline2d = new svgTimeline(params, svgParams);
         console.log(this.periodsList)
-        this.timeline2d.drawPeriods(this.periodsList);
+        this.timeline2d.drawPeriods();
+    }
+
+    update(){
+        this.timeline2d.drawPeriods();
     }
 }
 
@@ -66,7 +87,8 @@ class timelineEvent {
 }
 
 class timelinePeriod {
-    constructor(startTime, endTime, description){
+    constructor(startTime, endTime, description, timeline){
+        this.timeline = timeline;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
@@ -81,11 +103,19 @@ class timelinePeriod {
         this.startInput.setAttribute("type", "number");
         this.startInput.setAttribute("value", this.startTime);
         this.inputBlock.appendChild(this.startInput);
+        this.startInput.addEventListener('change', (e) => {
+            this.startTime = e.target.value;
+            this.timeline.update();
+        })
 
         this.endInput = document.createElement('input');
         this.endInput.setAttribute("type", "number");
         this.endInput.setAttribute("value", this.endTime);
         this.inputBlock.appendChild(this.endInput);
+        this.endInput.addEventListener('change', (e) => {
+            this.endTime = e.target.value;
+            this.timeline.update();
+        })
 
         this.descInput = document.createElement('input');
         this.descInput.setAttribute("type", "text");
@@ -107,8 +137,6 @@ class svgTimeline {
         let defaultParams = {
             divId: "",
             timeline: undefined, //a uTimeline instance
-            //startTime: -1000,
-            //endTime: 0,
             maxBarLength: 800,
             xOffset: 20,
             yOffset: 20, 
@@ -148,6 +176,11 @@ class svgTimeline {
 
         this.parentElement.appendChild(this.element);
         //background box
+        this.makeBackground()
+        
+    }
+
+    makeBackground(){
         this.background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
         let backgroundParams = {
@@ -157,14 +190,19 @@ class svgTimeline {
         }
         setAttributes(this.background, backgroundParams)
         this.element.appendChild(this.background);
-        
     }
 
-    drawPeriods(periods){ 
+    drawPeriods(){ 
+        this.element.innerHTML = '';
+        this.timeline.periodsListArea.innerHTML = "";
+        this.makeBackground();
+        let periods=this.timeline.periodsList;
         //periods is a list of timelinePeriods
+        let np = -1;
         for (let period of periods) {
+            np++;
             let attributes = this.barAttributes;
-            //console.log("dt", (period.startTime - period.endTime))
+            attributes['y'] = this.params.yOffset + np * (this.params.barHeight+this.params.barGap);
             attributes['width'] = this.scaleTime(period.startTime - period.endTime);
             attributes['x'] = this.xOffset(period.startTime);
             period.bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
