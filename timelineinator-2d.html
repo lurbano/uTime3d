@@ -24,7 +24,7 @@
         }
 
         #area2d {
-            height: 100px;
+            height: 150px;
             border: 1px solid blue;
         }
         #area3d {
@@ -64,14 +64,22 @@
 
 <script>
 
-    timeline = new uTimeline();
-    timeline.draw2d("area2d", {
-        width: "800px",
-        x: "20px",
-        y: "20px"
+    timeline = new uTimeline({
+        startTime: -4500000,
+        endTime: 0,
+        description: "Earth History",
     });
+    timeline.addControls("workArea");
+    timeline.draw2d(
+        params = {
+            divId:"area2d",
+        }, 
+        svgParams = {
+            
+        }
+    );
     console.log("add controls")
-    timeline.addControls("workArea")
+    //timeline.addControls("workArea")
     
  
     

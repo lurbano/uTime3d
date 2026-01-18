@@ -8,26 +8,34 @@ class uTimeline {
         this.params = {...defaults, ...params};
 
         this.startTime = this.params.startTime;
-        this.endTime = this.params.startTime;
+        this.endTime = this.params.endTime;
+        this.description = this.params.description;
         this.blocks = this.params.blocks;
+        this.eventsList = [];
+        this.periodsList = [];
+
+        this.fullTime = new timelinePeriod(this.startTime, this.endTime, this.description);
+        this.periodsList.push(this.fullTime);
+
     }
 
     addControls(divId=""){
         console.log(divId)
         this.controlsElement = document.getElementById(divId);
-        this.eventsList = [];
-        this.periodsList = [];
+        
 
-        this.controlsElement.setAttribute("display", 'grid');
-        this.controlsElement.setAttribute("grid-template-columns", "1fr 1fr");
-        this.controlsElement.setAttribute("gap", "5px");
+        this.controlsElement.style.display = "grid";
+        this.controlsElement.style.gridTemplateColumns = "50% 50%";
+        this.controlsElement.style.gap =  "5px";
 
         this.eventsListArea = document.createElement("div");
+        this.eventsListArea.innerHTML = "Events"
         this.periodsListArea = document.createElement("div");
+        this.periodsListArea.innerHTML = "Periods"
 
-        this.controlsElement.appendChild(this.eventsListArea);
         this.controlsElement.appendChild(this.periodsListArea);
-
+        this.controlsElement.appendChild(this.eventsListArea);
+        
         console.log(this.controlsElement);
 
         //startTime input
@@ -35,22 +43,19 @@ class uTimeline {
         // let endEvent = new timelineEvent(0, "End Time");
 
         // full period
-        let fullTime = new timelinePeriod(-4.5, 0, "Earth History");
-        this.periodsListArea.appendChild(fullTime.makeHtmlInputs());
-        this.periodsList.push(fullTime);
-
+        //this.periodsListArea.appendChild(fullTime.makeHtmlInputs());
+        
 
     }
 
-    draw2d(divId="", params={}){
-        let defaults = {
-            width: 1000,
-            height: 20
-        }
-        this.params2d = {...defaults, ...params};
-        
-        this.timeline2d = new svgTimeline(divId, this.params2d);
-    
+    draw2d(params={}, svgParams={}){
+        //params["startTime"] = this.startTime;
+        //params["endTime"] = this.endTime;
+        params["timeline"] = this;
+
+        this.timeline2d = new svgTimeline(params, svgParams);
+        console.log(this.periodsList)
+        this.timeline2d.drawPeriods(this.periodsList);
     }
 }
 
@@ -98,31 +103,87 @@ class timelinePeriod {
 
 
 class svgTimeline {
-    constructor(divId="", params={}){
-        let defaults = {
+    constructor(params={}, svgParams={}, barAttributes={}){
+        let defaultParams = {
+            divId: "",
+            timeline: undefined, //a uTimeline instance
+            //startTime: -1000,
+            //endTime: 0,
+            maxBarLength: 800,
+            xOffset: 20,
+            yOffset: 20, 
+            barHeight: 20,
+            barGap: 5,
+            
+        }
+        let defaultSvgParams = {
             width: 1000,
-            height: 20, 
-            fill: "lightblue",
-            stroke: "red",
+            height: 100,
+            "background-color": "lightblue",
+            stroke: "green",
             "stroke-width": "2"
         }
-        //this.params = {...defaults, ...params};
-        this.parentElement = document.getElementById(divId);
+        let defaultBarAttributes = {
+            height: 20,
+            fill: "blue"
+        }
+        
+        this.params = {...defaultParams, ...params};
+        this.svgParams = {...defaultSvgParams, ...svgParams};
+        this.barAttributes = {...defaultBarAttributes, ...barAttributes};
+        
+        this.timeline = this.params.timeline;
+
+        this.maxBarLength = this.params.maxBarLength;
+        this.startTime = this.timeline.startTime;
+        this.endTime = this.timeline.endTime;
+        this.totalTimePeriod = this.endTime - this.startTime;
+
+        console.log("this.svgParams", this.svgParams)
+        //console.log(this.params.divId)
+        this.parentElement = document.getElementById(this.params.divId);
         this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        this.element.setAttribute("width", "2000px")
+        setAttributes(this.element, this.svgParams)
+        console.log(this.element)
 
-        let bbAttributes = {...defaults, ...params};
-        
-        this.width = bbAttributes.width;
-        this.height = bbAttributes.height;
-        
-        this.boundaryBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        setAttributes(this.boundaryBox, bbAttributes);
-        this.element.appendChild(this.boundaryBox);
-
-        console.log(this.element.getAttribute("width"));
         this.parentElement.appendChild(this.element);
+        //background box
+        this.background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+        let backgroundParams = {
+            width: this.element.getAttribute("width"),
+            height: this.element.getAttribute("height"),
+            fill: this.element.getAttribute('background-color'),
+        }
+        setAttributes(this.background, backgroundParams)
+        this.element.appendChild(this.background);
         
+    }
+
+    drawPeriods(periods){ 
+        //periods is a list of timelinePeriods
+        for (let period of periods) {
+            let attributes = this.barAttributes;
+            //console.log("dt", (period.startTime - period.endTime))
+            attributes['width'] = this.scaleTime(period.startTime - period.endTime);
+            attributes['x'] = this.xOffset(period.startTime);
+            period.bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            setAttributes(period.bar, attributes);
+            this.element.appendChild(period.bar);
+
+            this.timeline.periodsListArea.appendChild(period.makeHtmlInputs());
+
+        }
+    }
+
+    scaleTime(t){
+        let factor = Math.abs(t)/this.totalTimePeriod;
+        console.log("scale", t, this.startTime, factor, Math.abs(t-this.startTime))
+        return this.maxBarLength * factor;
+    }
+
+    xOffset(t){
+        return this.params.xOffset + this.scaleTime(t-this.startTime);
     }
 
     drawPeriod(){
