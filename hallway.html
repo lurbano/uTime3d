@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+     <title>Timeline Hall</title> 
+     <script type="text/javascript" src="./x3dom.js"> </script> 
+     <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+    <link rel="stylesheet" type="text/css" href="./uTime3d.css"> 
+     <script type="text/javascript" src="./uTime3d.js"> </script> 
+     
+   </head> 
+   <body> 
+
+    
+     
+     <!-- Views -->
+     <input id="start_View" type="button" value="Start" class="view">
+     <input id="door_View" type="button" value="Door" class="view">
+     <input id="top_View" type="button" value="Top" class="view">
+
+     <div id="x3Spot"></div>
+
+ 
+</body>
+
+
+<script>
+    
+    // Set up 3d element
+    u3x = new ux3d("x3Spot", {
+        width: "800px",
+        height: "500px"
+    });
+
+
+    // Add shapes here:
+
+    //cube
+    floor = addBox(3.75,0.5,10.25);
+    floor.setColor(0, 0, 200);
+    u3x.add(floor);
+
+    leftwell = addBox(0.25,2.5,10.25);
+    leftwell.setColor(100,0,100);
+    leftwell.translate(-1.75,1.5,0);
+    u3x.add(leftwell);
+
+    rightwell = addBox(0.25,2.5,10.25);
+    rightwell.setColor(100,0,100);
+    rightwell.translate(1.75,1.5,0);
+    u3x.add(rightwell);
+
+    // image1 = addBox (0.30,0.61,0.91);
+    // image1.setColor(200,200,200);
+    // image1.translate(-1.7,1.5,4.5);
+    // u3x.add(image1);
+
+    image2 = addBox (0.30,0.61,0.91);
+    image2.setColor(0,300,100);
+    image2.translate(1.7,1.5,4.5);
+    u3x.add(image2);
+
+    // image3 = addBox (0.30,0.61,0.91);
+    // image3.setColor(200,50,100);
+    // image3.translate(-1.7,1.5,3.5);
+    // u3x.add(image3);
+    panels=[]
+    for (let i=0;i<10;i++){
+        p = addBox (0.30,0.61,0.91);
+        p.setColor(200,200,200);
+        p.translate(-1.7,1.5,-i+4.5);
+        u3x.add(p);
+        panels.push(p)
+    }
+
+    panels[2].setColor(0,300,0);
+
+ 
+
+
+
+
+    // leave the rest alone for now
+
+    //AXES
+    xyzAxes = new uAxes();
+    xyzAxes.translate(0,-2, 0);
+    u3x.add(xyzAxes);
+
+
+
+    // Views
+    view0 = new uViewpoint({
+        id:"startView",
+        description: "startView",
+        orientation:"0,0,0,0",
+        position:"0, 0, 10",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+
+    view1 = new uViewpoint({
+        id:"doorView",
+        description: "doorView",
+        orientation:"-0.01255 -0.99965 -0.02347 1.30219",
+        position:"-10 0.25 0",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    view2 = new uViewpoint({
+        id:"topView",
+        description: "topView",
+        orientation:"-0.98675 0.16035 0.02462 1.28837",
+        position:"1.36474 9.50507 2.79127",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    u3x.add(view0);
+    u3x.add(view1);
+    u3x.add(view2);
+
+  document.onload = function() {
+
+    //making the view buttons work
+    viewButtons = document.getElementsByClassName('view');
+    console.log(viewButtons)
+
+    for (let i =0; i<viewButtons.length; i++){
+        let element = viewButtons[i];
+        element.addEventListener("click", function(){
+            vid = element.id.replace("_", "");
+            console.log("vid", vid)
+            document.getElementById(vid).setAttribute("set_bind", 'true');
+        })
+    }
+
+      
+  };
+    
+</script>
+
+
+
+
+</html>
+
