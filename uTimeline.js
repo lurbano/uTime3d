@@ -20,7 +20,7 @@ class uTimeline {
     }
 
     addControls(divId=""){
-        console.log(divId)
+        //console.log(divId)
         this.controlsElement = document.getElementById(divId);
         
 
@@ -44,7 +44,7 @@ class uTimeline {
         this.controlsElement.appendChild(this.periodsArea);
         this.controlsElement.appendChild(this.eventsListArea);
         
-        console.log(this.controlsElement);
+        // console.log(this.controlsElement);
 
         //startTime input
         // let startEvent = new timelineEvent(-1000, "StartTime");
@@ -71,7 +71,7 @@ class uTimeline {
         params["timeline"] = this;
 
         this.timeline2d = new svgTimeline(params, svgParams);
-        console.log(this.periodsList)
+        // console.log(this.periodsList)
         this.timeline2d.drawPeriods();
     }
 
@@ -147,7 +147,8 @@ class svgTimeline {
         let defaultSvgParams = {
             width: 1000,
             height: 100,
-            "background-color": "lightblue",
+            //"background-color": "lightblue",
+            fill: "lightblue",
             stroke: "green",
             "stroke-width": "2"
         }
@@ -167,16 +168,16 @@ class svgTimeline {
         this.endTime = this.timeline.endTime;
         this.totalTimePeriod = this.endTime - this.startTime;
 
-        console.log("this.svgParams", this.svgParams)
+        //console.log("this.svgParams", this.svgParams)
         //console.log(this.params.divId)
         this.parentElement = document.getElementById(this.params.divId);
         this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         setAttributes(this.element, this.svgParams)
-        console.log(this.element)
+        //console.log("element:", this.element)
 
         this.parentElement.appendChild(this.element);
         //background box
-        this.makeBackground()
+        //this.makeBackground()
         
     }
 
@@ -186,7 +187,7 @@ class svgTimeline {
         let backgroundParams = {
             width: this.element.getAttribute("width"),
             height: this.element.getAttribute("height"),
-            fill: this.element.getAttribute('background-color'),
+            fill: this.element.getAttribute('fill'),
         }
         setAttributes(this.background, backgroundParams)
         this.element.appendChild(this.background);
@@ -200,23 +201,43 @@ class svgTimeline {
         //periods is a list of timelinePeriods
         let np = -1;
         for (let period of periods) {
+            console.log('period:', np)
             np++;
             let attributes = this.barAttributes;
-            attributes['y'] = this.params.yOffset + np * (this.params.barHeight+this.params.barGap);
+            let yPos =  this.params.yOffset + np * (this.params.barHeight+this.params.barGap);
+            attributes['y'] = yPos;
             attributes['width'] = this.scaleTime(period.startTime - period.endTime);
             attributes['x'] = this.xOffset(period.startTime);
             period.bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             setAttributes(period.bar, attributes);
             this.element.appendChild(period.bar);
 
+            
+
+            // add label
+            period.label = document.createElement("text");
+            let textAttributes = {
+                x: this.maxBarLength+this.params.xOffset,
+                y: 40, //yPos,
+                "text-anchor": "start",
+                //'dominant-baseline': "middle",
+                'font-size': 10,
+                fill: "black"
+            }   
+            setAttributes(period.label, textAttributes)
+            period.label.innerText = period.description;
+            //console.log("label:", period.label)
+            //this.element.appendChild(period.label);
+
             this.timeline.periodsListArea.appendChild(period.makeHtmlInputs());
+
 
         }
     }
 
     scaleTime(t){
         let factor = Math.abs(t)/this.totalTimePeriod;
-        console.log("scale", t, this.startTime, factor, Math.abs(t-this.startTime))
+        // console.log("scale", t, this.startTime, factor, Math.abs(t-this.startTime))
         return this.maxBarLength * factor;
     }
 
