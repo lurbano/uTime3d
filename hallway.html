@@ -15,8 +15,10 @@
      
      <!-- Views -->
      <input id="start_View" type="button" value="Start" class="view">
-     <input id="door_View" type="button" value="Door" class="view">
+     <input id="door_View" type="button" value="Mid" class="view">
      <input id="top_View" type="button" value="Top" class="view">
+
+     <input type="button" value="Navigation Mode:" id="navModeButton"> <span id="navMode"></span>
 
      <div id="x3Spot"></div>
 
@@ -31,6 +33,10 @@
         width: "800px",
         height: "500px"
     });
+    u3x.addLight({
+        direction: "-1, -1, 0",
+        intensity: 0.5
+    })
 
 
     // Add shapes here:
@@ -75,7 +81,7 @@
 
     panels[2].setColor(0,300,0);
 
- 
+    panels[4].addVideo("./videos/320533_tiny.mp4");
 
 
 
@@ -93,24 +99,35 @@
     view0 = new uViewpoint({
         id:"startView",
         description: "startView",
-        orientation:"0,0,0,0",
-        position:"0, 0, 10",
+        orientation:"0,1,0,0.1",
+        position:"1, 1.5, 10",
         fieldofview: "0.78540",
-        centerofrotation: "0,0,0",
+        centerofrotation: "0,1.5,0",
         znear:"-1",
         zfar:"-1"
     })
 
     view1 = new uViewpoint({
         id:"doorView",
-        description: "doorView",
-        orientation:"-0.01255 -0.99965 -0.02347 1.30219",
-        position:"-10 0.25 0",
+        description: "startView",
+        orientation:"0,1,0,1.57",
+        position:"1.75, 1.5, 0",
         fieldofview: "0.78540",
-        centerofrotation: "0,0,0",
+        centerofrotation: "-2,1.5,0",
         znear:"-1",
         zfar:"-1"
-    });
+    })
+
+    // view1 = new uViewpoint({
+    //     id:"doorView",
+    //     description: "doorView",
+    //     orientation:"-0.01255 -0.99965 -0.02347 1.30219",
+    //     position:"-10 0.25 0",
+    //     fieldofview: "0.78540",
+    //     centerofrotation: "0,0,0",
+    //     znear:"-1",
+    //     zfar:"-1"
+    // });
 
     view2 = new uViewpoint({
         id:"topView",
@@ -142,6 +159,19 @@
         })
     }
 
+    //navigation modes
+    navigationModes = ["walk", "examine",  "fly", "game"]
+    navModeNum = 0;
+    document.getElementById("navModeButton").addEventListener("click", function(){
+        console.log("changing navigation mode")
+        navModeNum = navModeNum < navigationModes.length-1 ? navModeNum + 1 : 0;
+
+        console.log("new navMode", navModeNum, navigationModes[navModeNum])
+        u3x.setNavigationMode(navigationModes[navModeNum]);
+        document.getElementById("navMode").innerHTML = u3x.scene.navElem.div.getAttribute('type');
+    })
+
+    panels[4].video.setClickListener(panels[4]);
       
   };
     

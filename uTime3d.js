@@ -30,11 +30,13 @@ class ux3d {
         this.elem.appendChild(this.scene.div);
         this.primitives = [];
         this.transforms = [];
-
+        
         this.hostDiv = document.getElementById(hostDivId);
         this.hostDiv.appendChild(this.elem);
 
         this.addOpenscadControls();
+
+        this.setNavigationMode("walk");
 
     }
 
@@ -53,6 +55,22 @@ class ux3d {
     setNavigationMode(navMode){
         this.scene.setNavigationMode(navMode);
     }
+
+    addLight(params={}){
+        let defaults = {
+            direction: "0 -1 0",
+            global: true,
+            intensity: 1,
+            color:"1 1 1"
+        }
+
+        params = {...defaults, ...params};
+
+
+        this.scene.addLight(params);
+
+    }
+
 
     addOpenscadControls() {
         //insert them after divid
@@ -135,6 +153,7 @@ class uScene {
         //console.log("Nav:", this.navElem.div);
         this.div.appendChild(this.navElem.div);
 
+        this.lights = []; //user defined lights in the scene
 
     }
 
@@ -145,6 +164,38 @@ class uScene {
     addTo(id){
         outerDiv = document.getElementById(id);
         outerDiv.appendChild(this.div);
+    }
+
+    addLight(params={}){
+        let defaults = {
+            direction: "0 -1 0",
+            global: true,
+            intensity: 1,
+            color:"1 1 1"
+        }
+
+        this.params = {...defaults, ...params};
+
+        let light = new uLight(params);
+        this.div.appendChild(light.elem);
+        this.lights.push(light);
+    }
+
+}
+
+class uLight {
+    constructor(params={}){
+        let defaults = {
+            direction: "0 -1 0",
+            global: true,
+            intensity: 1,
+            color:"1 1 1"
+        }
+
+        this.params = {...defaults, ...params};
+
+        this.elem = document.createElement("DirectionalLight");
+        setAttributes(this.elem, this.params);
     }
 }
 
