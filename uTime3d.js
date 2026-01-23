@@ -30,6 +30,7 @@ class ux3d {
         this.elem.appendChild(this.scene.div);
         this.primitives = [];
         this.transforms = [];
+        this.viewpoints = [];
         
         this.hostDiv = document.getElementById(hostDivId);
         this.hostDiv.appendChild(this.elem);
@@ -44,6 +45,12 @@ class ux3d {
     //     this.hostDiv = document.getElementById(hostDivId);
     //     this.hostDiv.appendChild(this.elem);
     // }
+
+    addViewpoint(params={}){
+        let v = new uViewpoint(params);
+        this.viewpoints.push(v);
+        this.scene.div.appendChild(v.assemble());
+    }
 
     add(obj){
         this.primitives.push(obj);
@@ -406,6 +413,14 @@ class uPrimitive {
     parse_X3DOM_vector(attrib, scale=1){
         let str = this.div.getAttribute(attrib);
         return parse_X3DOM_vector(str, scale);
+    }
+
+    getPosition(vec=false){
+        let pos = this.transform.div.getAttribute('translation');
+        if (vec === true) { // return (x, y, z)
+            pos = parse_X3DOM_vector(pos);
+        }
+        return pos;
     }
 
 }
@@ -869,13 +884,6 @@ class uViewpoint{
     }
 }
 
-// class veiwPointControler{
-//     constructor(){
-//         this.viewpoints = [];
-//     }
-
-//     addButtons
-// }
 
 
 
