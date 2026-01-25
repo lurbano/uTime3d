@@ -27,7 +27,7 @@
 
 
      <hr>
-     Demo: Click upper left box to play video, lower left ball to play sound, cylinder to change its color.<br>
+     Demo: Click upper left box to play video, lower left ball to play sound, cylinder to change its color. Clicking the cone takes you to the hallway.html scene.<br>
      <input type="button" value="Show Axes" id="showAxes">
      
      <br>
@@ -52,11 +52,15 @@
               u3x.add(sphere);
             </code></pre></div>
 
-          <li>Cone: set color</li>
+          <li>Cone: set color, make cone a link</li>
             <div class="codeBlock"><pre><code>
               cone = new uCone();
               cone.setColor(255, 150, 10);
               u3x.add(cone);
+            </code></pre></div>
+            To make the cone a link you need to add the following to the document.onload function:
+            <div class="codeBlock"><pre><code>
+              cone.addLink("hallway.html");
             </code></pre></div>
 
           <li>Cylinder: translate, click to change color</li>
@@ -237,6 +241,8 @@
       vidBox.video.setClickListener(vidBox);
       
       sphere.sound.setClickListener(sphere);
+
+      cone.addLink('hallway.html')
 
   };
     

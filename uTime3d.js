@@ -298,8 +298,13 @@ class uPrimitive {
         let defaults = {}
         this.params = {...defaults, ...params};
 
+        
         this.div = document.createElement(primitiveType);
         setAttributes(this.div, this.params);
+
+        // this.link = document.createElement("a");
+        // this.link.appendChild(this.div);
+
         this.shape = new uShape();
         this.appearance = new uAppearance();
         this.material = new uMaterial();
@@ -312,7 +317,9 @@ class uPrimitive {
         this.appearance.div.appendChild(this.material.div);
         this.shape.div.appendChild(this.appearance.div);
         this.shape.div.appendChild(this.div);
-
+        
+        //this.shape.div.appendChild(this.link)
+        
         this.transform.appendChild(this.shape);
 
         return this.transform.div;
@@ -421,6 +428,20 @@ class uPrimitive {
             pos = parse_X3DOM_vector(pos);
         }
         return pos;
+    }
+
+    addLink(url){
+        //create link element
+        this.div.addEventListener("click", () =>{
+            console.log("clicked");
+            window.location.href = url;
+        })
+        // this.link = document.createElement('a');
+        //this.link.setAttribute("href", `"${url}"`);
+        //console.log(this.link)
+        // this.shape.div.appendChild(this.link);
+        console.log(this.transform.div.innerHTML)
+        // this.link.appendChild(this.div);
     }
 
 }
