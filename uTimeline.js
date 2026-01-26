@@ -43,6 +43,7 @@ class uTimeline {
             yOffset: 20, 
             barHeight: 20,
             barGap: 5,
+            eventTagWidth: 20,
         }
         this.params_2d = {...defaults, ...params};
 
@@ -101,6 +102,40 @@ class uTimeline {
             let y =  this.params_2d.yOffset + np * (this.params_2d.barHeight+this.params_2d.barGap);
             period.bar.style.top = `${y}px`;
             this.map2dPeriodElement.appendChild(period.bar);
+        }
+
+        // events
+        let w = this.params_2d.eventTagWidth;
+        this.map2dEventElement.innerHTML = '';
+        for (let event of this.eventsList) {
+            
+            let eDiv = document.createElement('div');
+            eDiv.style.width = `${w}px`;
+            eDiv.style.height = `${w}px`;
+            eDiv.style.border = '1px solid black';
+            eDiv.style.borderBottom = 'none';
+            eDiv.style.borderRadius = '2px';
+            eDiv.style.position = 'absolute';
+            let x = this.xOffset_2d(event.eventTime, this.params_2d.maxBarLength) - w/2;
+
+            eDiv.style.left = `${x}px`;
+            eDiv.style.top = '5px';
+
+            //label
+            let label = document.createElement('div')
+            eDiv.appendChild(label)
+            label.innerHTML = event.description;
+            label.style.writingMode = 'vertical-rl'
+            //label.style.textOrientation = 'upright'
+            //label.style.transform = 'rotate(90deg)'
+            label.style.whiteSpace = 'nowrap'
+            label.style.fontSize = `${w * 0.6}px`
+            //label.style.textAlign = 'center'
+            label.style.position = 'absolute'
+            label.style.marginTop = "5px"
+
+            event.tag = eDiv;
+            this.map2dEventElement.appendChild(event.tag);
         }
     }
 
@@ -169,7 +204,6 @@ class uTimeline {
         for (let event of this.eventsList) {
             
             this.eventsListArea.appendChild(event.makeHtmlInputs());
-            console.log("events:", this.eventsListArea.innerHTML)
         }
     }
 
@@ -186,7 +220,7 @@ class uTimeline {
 
     addEvent(t){
         console.log("adding Event:", t);
-        let e = new timelineEvent(t);
+        let e = new timelineEvent(t, "", this);
         this.eventsList.push(e);
 
         this.updateControls();
@@ -194,20 +228,20 @@ class uTimeline {
 
     }
 
-    draw2d(params={}, svgParams={}){
-        //params["startTime"] = this.startTime;
-        //params["endTime"] = this.endTime;
-        params["timeline"] = this;
+    // draw2d(params={}, svgParams={}){
+    //     //params["startTime"] = this.startTime;
+    //     //params["endTime"] = this.endTime;
+    //     params["timeline"] = this;
 
-        this.timeline2d = new svgTimeline(params, svgParams);
-        // console.log(this.periodsList)
-        this.timeline2d.drawPeriods();
-    }
+    //     this.timeline2d = new svgTimeline(params, svgParams);
+    //     // console.log(this.periodsList)
+    //     this.timeline2d.drawPeriods();
+    // }
 
-    draw2dDiv(params={}){
+    // draw2dDiv(params={}){
 
         
-    }
+    // }
 
     update(){
         //this.timeline2d.drawPeriods();
@@ -218,9 +252,10 @@ class uTimeline {
 }
 
 class timelineEvent {
-    constructor(eventTime=0, description=""){
+    constructor(eventTime=0, description="", timeline){
         this.eventTime = eventTime;
         this.description = description;
+        this.timeline = timeline;
     }
 
     makeHtmlInputs(){
