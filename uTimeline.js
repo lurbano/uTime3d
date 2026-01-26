@@ -48,23 +48,46 @@ class uTimeline {
 
         console.log(this.params_2d.divId)
         this.map2dElement = document.getElementById(this.params_2d.divId);
-
-        this.map2dElement.style.backgroundColor = 'lightgreen'
-        this.map2dElement.style.border = "3px inset pink"
         this.map2dElement.style.position = 'relative';
+        this.map2dElement.style.height = "200px";
+        this.map2dElement.style.border = '1px solid green'
+
+        this.map2dPeriodElement = document.createElement('div');
+        this.map2dPeriodElement.style.backgroundColor = 'lightSalmon'
+        this.map2dPeriodElement.style.border = "3px inset pink"
+        this.map2dPeriodElement.style.position = 'absolute';
+        this.map2dPeriodElement.style.height = '100px';
+        this.map2dPeriodElement.style.width = "100%"
+        this.map2dPeriodElement.style.top = '0';
+        this.map2dPeriodElement.style.left = '0';
         
+        this.map2dElement.appendChild(this.map2dPeriodElement);
+
+        this.map2dEventElement = document.createElement('div');
+        this.map2dEventElement.style.backgroundColor = 'lightgreen'
+        this.map2dEventElement.style.border = "3px inset pink"
+        this.map2dEventElement.style.position = 'absolute';
+        this.map2dEventElement.style.height = '100px';
+        this.map2dEventElement.style.width = "100%"
+        this.map2dEventElement.style.top = '100px';
+        this.map2dEventElement.style.left = '0';
+        
+        this.map2dElement.appendChild(this.map2dEventElement);
 
         this.update2dMap();
         
     }
 
     update2dMap(){
-        this.map2dElement.innerHTML = "";
+        this.map2dPeriodElement.innerHTML = "";
         let np = -1;
         for (let period of this.periodsList) {
             np++;
             let pDiv = document.createElement('div');
-            pDiv.style.backgroundColor = "blue";
+            pDiv.style.backgroundColor = "khaki";
+            pDiv.style.border = '1px solid black';
+            pDiv.style.borderRadius = '2px';
+            pDiv.style.fontSize = `${this.params_2d.barHeight * 0.6}px`
             pDiv.style.height = `${this.params_2d.barHeight}px`; //this.params_2d.barHeight;
             let barLength=this.scaleTime(period.endTime-period.startTime, this.params_2d.maxBarLength);
             pDiv.style.width = `${barLength}px`;
@@ -77,7 +100,7 @@ class uTimeline {
             period.bar.style.left = `${x}px`;
             let y =  this.params_2d.yOffset + np * (this.params_2d.barHeight+this.params_2d.barGap);
             period.bar.style.top = `${y}px`;
-            this.map2dElement.appendChild(period.bar);
+            this.map2dPeriodElement.appendChild(period.bar);
         }
     }
 
@@ -101,9 +124,20 @@ class uTimeline {
         this.controlsElement.style.gridTemplateColumns = "50% 50%";
         this.controlsElement.style.gap =  "5px";
 
+        // events panel
         this.eventsListArea = document.createElement("div");
         this.eventsListArea.innerHTML = "Events"
+        this.addEventButton = document.createElement("input");
+        this.addEventButton.setAttribute("type", "button");
+        this.addEventButton.setAttribute("value", "Add Event");
+        this.addEventButton.addEventListener("click", () => {this.addEvent(this.startTime)});
 
+        this.eventsControlArea = document.createElement("div")
+        this.eventsControlArea.innerHTML = "Events"
+        this.eventsControlArea.appendChild(this.addEventButton);
+        this.eventsControlArea.appendChild(this.eventsListArea);
+        
+        //periods panel
         this.periodsListArea = document.createElement("div");
         this.addPeriodButton = document.createElement("input");
         this.addPeriodButton.setAttribute("type", "button");
@@ -117,7 +151,7 @@ class uTimeline {
         this.periodsControlArea.appendChild(this.periodsListArea);
 
         this.controlsElement.appendChild(this.periodsControlArea);
-        this.controlsElement.appendChild(this.eventsListArea);
+        this.controlsElement.appendChild(this.eventsControlArea);
         
         // this.periodsControlArea.appendChild(this.fullTime.makeHtmlInputs());
 
@@ -130,18 +164,34 @@ class uTimeline {
         for (let period of this.periodsList) {
             this.periodsListArea.appendChild(period.makeHtmlInputs());
         }
+        
+        this.eventsListArea.innerHTML = '';
+        for (let event of this.eventsList) {
+            
+            this.eventsListArea.appendChild(event.makeHtmlInputs());
+            console.log("events:", this.eventsListArea.innerHTML)
+        }
     }
 
     addPeriod(){
         
-        console.log("adding Period")
         let p = new timelinePeriod(this.startTime, this.endTime, "", this);
         this.periodsList.push(p);
-        console.log(this.periodsList);
-        //this.timeline2d.drawPeriods();
+        
         this.updateControls();
         this.update2dMap();
+
         
+    }
+
+    addEvent(t){
+        console.log("adding Event:", t);
+        let e = new timelineEvent(t);
+        this.eventsList.push(e);
+
+        this.updateControls();
+        this.update2dMap();
+
     }
 
     draw2d(params={}, svgParams={}){
@@ -161,14 +211,50 @@ class uTimeline {
 
     update(){
         //this.timeline2d.drawPeriods();
+        //console.log("updating timeline")
         this.updateControls();
         this.update2dMap();
     }
 }
 
 class timelineEvent {
-    constructor(eventTime, description){
+    constructor(eventTime=0, description=""){
+        this.eventTime = eventTime;
+        this.description = description;
+    }
 
+    makeHtmlInputs(){
+        this.inputBlock = document.createElement("div");
+        this.inputBlock.style.width = "95%";
+        this.inputBlock.style.backgroundColor = "lightGreen";
+        this.inputBlock.style.padding = "2px";
+        this.inputBlock.style.border = "3px outset red"
+        this.inputBlock.style.marginTop = "3px"
+
+        this.eventTimeInput = document.createElement('input');
+        this.eventTimeInput.setAttribute("type", "number");
+        this.eventTimeInput.setAttribute("value", this.eventTime);
+        this.inputBlock.appendChild(this.eventTimeInput);
+        this.eventTimeInput.addEventListener('change', (e) => {
+            this.eventTime = e.target.value;
+            this.timeline.update();
+        })
+
+        this.descInput = document.createElement('input');
+        this.descInput.setAttribute("type", "text");
+        this.descInput.setAttribute("value", this.description);
+        this.inputBlock.appendChild(this.descInput);
+        this.descInput.addEventListener("change", (e) => {
+            this.description = e.target.value;
+            this.timeline.update();
+        } )
+
+        this.delButton = document.createElement("input");
+        this.delButton.setAttribute('type', "button");
+        this.delButton.setAttribute('value', "-");
+        this.inputBlock.appendChild(this.delButton);
+
+        return this.inputBlock;
     }
 }
 
@@ -187,6 +273,8 @@ class timelinePeriod {
         this.inputBlock.style.width = "95%";
         this.inputBlock.style.backgroundColor = "lightSalmon";
         this.inputBlock.style.padding = "2px";
+        this.inputBlock.style.border = "3px outset red"
+        this.inputBlock.style.marginTop = "3px"
 
         this.startInput = document.createElement('input');
         this.startInput.setAttribute("type", "number");
@@ -210,6 +298,10 @@ class timelinePeriod {
         this.descInput.setAttribute("type", "text");
         this.descInput.setAttribute("value", this.description);
         this.inputBlock.appendChild(this.descInput);
+        this.descInput.addEventListener("change", (e) => {
+            this.description = e.target.value;
+            this.timeline.update();
+        } )
 
         this.delButton = document.createElement("input");
         this.delButton.setAttribute('type', "button");
