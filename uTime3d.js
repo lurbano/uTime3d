@@ -457,7 +457,7 @@ function parse_X3DOM_vector(str, scale=1){
 function X3DOM_to_OpenSCAD_vector(div, attrib, scale){
     let str = div.getAttribute(attrib);
     let dims = parse_X3DOM_vector(str, scale);
-    let OpenSCAD_str = `(${dims[0]},${dims[1]},${dims[2]})`;
+    let OpenSCAD_str = `[${dims[0]},${dims[1]},${dims[2]}]`;
     return OpenSCAD_str;
 }
 
@@ -565,7 +565,7 @@ class uTransform{
     toOpenSCAD(scale){
 
         let v = X3DOM_to_OpenSCAD_vector(this.div, 'translation', scale);
-        let scadStr = `\ntranslate${v})`
+        let scadStr = `\ntranslate(${v})`
         
         return scadStr;
 
@@ -737,7 +737,8 @@ class uBox extends uPrimitive{
         //let dims = this.parse_X3DOM_vector("position", scale);
 
         let dims = this.parse_X3DOM_vector("size", scale);
-        scadStr += `\n cube(${dims[0]},${dims[1]},${dims[2]});`
+        scadStr += `\n cube([${dims[0]},${dims[1]},${dims[2]}], center=true);`
+        //scadStr += `\n cube([${dims[0]},${dims[2]},${dims[1]}], center=true);`
 
         return scadStr;
 
