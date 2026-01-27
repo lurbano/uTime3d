@@ -344,6 +344,11 @@ class uPrimitive {
         this.material.div.setAttribute("diffusecolor", `${r} ${g} ${b}`);
     }
 
+    setTransparency(val){
+
+        this.material.div.setAttribute("transparency", val);
+    }
+
     setEmissiveColor(r, g, b){
         r = r/255;
         g = g/255;

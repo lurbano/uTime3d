@@ -14,15 +14,22 @@
     
      
      <!-- Views -->
+      Viewpoints:
      <input id="start_View" type="button" value="Start" class="view">
      <input id="door_View" type="button" value="Mid" class="view">
      <input id="top_View" type="button" value="Top" class="view">
      <br>
+     Click Viewpoint buttons below to navigate along the wall.
      <div id="viewArea"></div>
 
      <input type="button" value="Navigation Mode:" id="navModeButton"> <span id="navMode"></span>
 
      <div id="x3Spot"></div>
+
+<p>
+    Proof-of-concept, VR timeline (https://soriki.com/x3d/hallway.html) model, created by students using X3DOM and the uTime3d library. Includes video on the middle panel that you click to play, and nautilus diagram drawn by a middle schooler on the second panel. In the final version, the panels on the wall will be contiguous.  Clicking the green panel (third panel) will take you to the <a href="./index.html">Project Homepage</a>.
+</p>
+     
 
  
 </body>
@@ -56,6 +63,7 @@
     rightwell = addBox(0.25,2.5,10.25);
     rightwell.setColor(100,0,100);
     rightwell.translate(1.75,1.5,0);
+    rightwell.setTransparency(0.6)
     u3x.add(rightwell);
 
     // image1 = addBox (0.30,0.61,0.91);
@@ -88,7 +96,7 @@
     panels[0].addTexture("./images/moon-200.jpeg");
 
 
-    panels[8].addTexture("./images/TimelineDrawings_1_2x3-600.png")
+    panels[1].addTexture("./images/TimelineDrawings_1_2x3-600.png")
 
     // leave the rest alone for now
 
