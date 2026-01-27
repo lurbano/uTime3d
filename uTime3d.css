@@ -6,7 +6,8 @@
         margin-top: 5px;
       }
       #x3Spot {
-        border: 3px inset lightskyblue;
+        border: 8px inset lightskyblue;
+        width: 90%;
       }
       #openSCAD {
         background-color:azure;
