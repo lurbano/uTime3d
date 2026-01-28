@@ -22,7 +22,13 @@ class uTimeline {
         this.draw2dMap = this.params.draw2dMap;
 
         // initial, full time period
-        this.fullTime = new timelinePeriod(this.startTime, this.endTime, this.description, this);
+        this.fullTime = new timelinePeriod({
+            startTime: this.startTime, 
+            endTime: this.endTime, 
+            description: this.description, 
+            timeline: this, 
+            id: "fullTime"});
+
         this.periodsList.push(this.fullTime);
 
         this.addControls(this.params.controlElementId);
@@ -207,9 +213,14 @@ class uTimeline {
         }
     }
 
-    addPeriod(){
+    addPeriod(id=""){
         
-        let p = new timelinePeriod(this.startTime, this.endTime, "", this);
+        let p = new timelinePeriod({
+            startTime: this.startTime, 
+            endTime: this.endTime, 
+            description:"", 
+            timeline: this,
+            id: id});
         this.periodsList.push(p);
         
         this.updateControls();
@@ -243,9 +254,24 @@ class uTimeline {
         
     // }
 
-    update(){
-        //this.timeline2d.drawPeriods();
-        //console.log("updating timeline")
+    update(params={}){
+        let defaultParams = {
+            newStartTime: false,
+            newEndTime: false,
+        }
+
+        params = {...defaultParams, ...params};
+        
+        if (params.newStartTime !== false){
+            this.startTime = params.newStartTime;
+            this.totalTimePeriod = this.endTime - this.startTime;
+            console.log("update startTime:", params);
+        }
+        if (params.newEndTime !== false){
+            this.endTime = params.newEndTime;
+            this.totalTimePeriod = this.endTime - this.startTime;
+        }
+
         this.updateControls();
         this.update2dMap();
     }
@@ -294,11 +320,22 @@ class timelineEvent {
 }
 
 class timelinePeriod {
-    constructor(startTime, endTime, description, timeline){
-        this.timeline = timeline;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.description = description;
+    constructor(params={}) {
+        let defaultParams = {
+            startTime:-100, 
+            endTime: 0, 
+            description: "", 
+            timeline: "", 
+            id: ""
+        }
+
+        this.params = {...defaultParams, ...params};
+        
+        this.timeline = this.params.timeline;
+        this.startTime = this.params.startTime;
+        this.endTime = this.params.endTime;
+        this.description = this.params.description;
+        this.id = this.params.id;
     }
     makeHtmlBar(){
 
@@ -317,7 +354,15 @@ class timelinePeriod {
         this.inputBlock.appendChild(this.startInput);
         this.startInput.addEventListener('change', (e) => {
             this.startTime = e.target.value;
-            this.timeline.update();
+            console.log("id:", this.id)
+            if (this.id === "fullTime") {
+                this.timeline.update({
+                    newStartTime: this.startTime
+                });
+            } else {
+                this.timeline.update();
+            }
+            console.log("input:", this.startTime, this.endTime)
         })
 
         this.endInput = document.createElement('input');
