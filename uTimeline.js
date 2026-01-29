@@ -1,12 +1,55 @@
+function loadTimeline(str){
+    
+    let data = JSON.parse(str);
+
+    let masterPeriod = data['periods'][0];
+    for (let period of data.periods){
+        if (period.id==="fullTime"){
+            masterPeriod = period;
+        }
+    }
+    
+    let timeline =  new uTimeline({
+        startTime: masterPeriod.startTime,
+        endTime: masterPeriod.endTime,
+        description: masterPeriod.description,
+        controlElementId: data.params.controlElementId,
+        draw2dElementId: data.params.draw2dElementId,
+        draw2dMap: data.params.draw2dMap
+    });
+
+    //load periods
+    for (let period of data.periods){
+        if (period.id !== "fullTime"){
+            timeline.addPeriod(period);
+            // let p = timeline.periodsList[timeline.periodsList.length -1];
+            // p.startTime = period.startTime;
+            // p.endTime = period.endTime;
+            // p.description = period.description;
+            // p.id =period.id;
+        }
+    }
+
+    //load events
+    for (let event of data.events){
+
+        timeline.addEvent(event);
+        
+    }
+
+    return timeline;
+}
+
 class uTimeline {
     constructor(params={}){
         let defaults = {
             startTime: -4500000,
             endTime: 0,
             blocks: 1,
-            controlElementId: "",
-            draw2dElementId: "",
+            controlElementId: "workArea",
+            draw2dElementId: "area2d",
             draw2dMap: true,
+            description: ""
         }
         this.params = {...defaults, ...params};
 
@@ -41,6 +84,33 @@ class uTimeline {
 
     }
 
+    write(){
+        let output = {
+            periods: [],
+            events: [],
+            params: this.params
+        };
+        
+        for (let period of this.periodsList){
+            let p = {
+                startTime: period.startTime,
+                endTime: period.endTime,
+                description: period.description,
+                id: period.id
+            }
+            output.periods.push(p);
+        }
+        for (let event of this.eventsList){
+            let e = {
+                eventTime: event.eventTime,
+                description: event.description
+            }
+            output.events.push(e);
+        }
+        
+        return JSON.stringify(output);
+    }
+
     add2dMap(params={}){
         let defaults = {
             divId: "",
@@ -53,7 +123,6 @@ class uTimeline {
         }
         this.params_2d = {...defaults, ...params};
 
-        console.log(this.params_2d.divId)
         this.map2dElement = document.getElementById(this.params_2d.divId);
         this.map2dElement.style.position = 'relative';
         this.map2dElement.style.height = "200px";
@@ -159,6 +228,7 @@ class uTimeline {
     addControls(divId=""){
         //console.log(divId)
         this.controlsElement = document.getElementById(divId);
+        this.controlsElement.innerHTML = "";
         
 
         this.controlsElement.style.display = "grid";
@@ -171,7 +241,12 @@ class uTimeline {
         this.addEventButton = document.createElement("input");
         this.addEventButton.setAttribute("type", "button");
         this.addEventButton.setAttribute("value", "Add Event");
-        this.addEventButton.addEventListener("click", () => {this.addEvent(this.startTime)});
+        this.addEventButton.addEventListener("click", () => {
+            this.addEvent({
+                eventTime: this.startTime,
+                description: ""
+            })
+        });
 
         this.eventsControlArea = document.createElement("div")
         this.eventsControlArea.innerHTML = "Events"
@@ -213,14 +288,18 @@ class uTimeline {
         }
     }
 
-    addPeriod(id=""){
-        
-        let p = new timelinePeriod({
+    addPeriod(params={}){
+        let defaultParams = {
             startTime: this.startTime, 
             endTime: this.endTime, 
             description:"", 
             timeline: this,
-            id: id});
+            id: ""
+        }
+        params = {...defaultParams, ...params};
+        
+        
+        let p = new timelinePeriod(params);
         this.periodsList.push(p);
         
         this.updateControls();
@@ -229,9 +308,17 @@ class uTimeline {
         
     }
 
-    addEvent(t){
-        console.log("adding Event:", t);
-        let e = new timelineEvent(t, "", this);
+    addEvent(params={}){
+        let defaultParams = {
+            eventTime: 0,
+            description: "",
+            timeline: this
+        }
+        params = {...defaultParams, ...params};
+        
+        //console.log("adding Event:", t);
+        //let e = new timelineEvent(t, "", this);
+        let e = new timelineEvent(params);
         this.eventsList.push(e);
 
         this.updateControls();
@@ -278,10 +365,22 @@ class uTimeline {
 }
 
 class timelineEvent {
-    constructor(eventTime=0, description="", timeline){
-        this.eventTime = eventTime;
-        this.description = description;
-        this.timeline = timeline;
+    // constructor(eventTime=0, description="", timeline){
+    //     this.eventTime = eventTime;
+    //     this.description = description;
+    //     this.timeline = timeline;
+    // }
+    constructor(params={}){
+        let defaultParams = {
+            eventTime: 0,
+            description: "",
+            timeline: undefined
+        }
+        params = {...defaultParams, ...params};
+
+        this.eventTime = params.eventTime;
+        this.description = params.description;
+        this.timeline = params.timeline;
     }
 
     makeHtmlInputs(){
