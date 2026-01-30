@@ -99,14 +99,16 @@
         panels.push(p)
     }
 
+    //panels[1].addVideo("./videos/ParallelTimelinesVideo.mp4");
+
     panels[2].setColor(0,300,0);
     
     panels[4].addVideo("./videos/320533_tiny.mp4");
 
-    panels[0].addTexture("./images/moon-200.jpeg");
+    panels[7].addTexture("./images/moon-200.jpeg");
 
 
-    panels[1].addTexture("./images/TimelineDrawings_1_2x3-600.png")
+    panels[0].addTexture("./images/TimelineDrawings_1_2x3-600.png")
 
     // leave the rest alone for now
 
@@ -215,7 +217,15 @@
         document.getElementById("navMode").innerHTML = u3x.scene.navElem.div.getAttribute('type');
     })
 
+    // panels[1].video.setClickListener(panels[1]);
+
     panels[4].video.setClickListener(panels[4]);
+    
+    console.log('pdiv 1', panels[1].div)
+    panels[1].div.addEventListener("click", () => {
+        console.log("clicked Panel 1")
+    })
+    
     panels[2].addLink("https://soriki.com/x3d");
 
     

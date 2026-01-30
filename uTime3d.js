@@ -445,7 +445,7 @@ class uPrimitive {
         //this.link.setAttribute("href", `"${url}"`);
         //console.log(this.link)
         // this.shape.div.appendChild(this.link);
-        console.log(this.transform.div.innerHTML)
+        //console.log(this.transform.div.innerHTML)
         // this.link.appendChild(this.div);
     }
 
@@ -521,12 +521,12 @@ class uAudioclip {
 class uMovieTexture{
     constructor(params={}){
         let defaults = {
-
+            loop: false
         }
         this.params = {...defaults, ...params};
         this.div = document.createElement("MovieTexture");
         setAttributes(this.div, this.params);
-
+        this.div.muted = true;
     }
 
     play(){
@@ -540,6 +540,7 @@ class uMovieTexture{
     }
 
     setClickListener(uObj){ // play when uObj is clicked
+        console.log("uObj", uObj.div)
         uObj.div.addEventListener("click", () => {
             this.play();
         });

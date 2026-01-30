@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <title>Timeline Maker</title> 
+    <script type="text/javascript" src="./x3dom.js"> </script> 
+    <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+    <link rel="stylesheet" type="text/css" href="./uTime3d.css"> 
+    <script type="text/javascript" src="./uTime3d.js"> </script> 
+    <script type="text/javascript" src="./uTimeline.js"> </script> 
+
+    <style>
+        #x3Spot {
+            width: 500px;
+            height: 500px;
+        }
+        #workArea {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            left: 520px;
+        }
+
+        #area2d {
+            height: 150px;
+        }
+        #area3d {
+            /* height: 50px; */
+            width: 510px;
+            border: 1px solid red;
+        }
+
+        #inOutString {
+            height: 10em;
+            width: 75%;
+        }
+        
+    </style>   
+
+</head> 
+
+<body> 
+
+    <div id="area2d"></div>
+
+    <div id="workArea">
+        
+
+    </div>
+
+    
+    <div id="area3d">
+        3d Area
+        <!-- Views -->
+    <input id="start_View" type="button" value="Start" class="view">
+    <input id="door_View" type="button" value="Door" class="view">
+    <input id="top_View" type="button" value="Top" class="view">
+
+        <div id="x3Spot"></div>
+    </div>
+
+    <div id="outputArea">
+        <input type="button" id="writeOut" value="Write Output">
+        <input type="button" id="loadButton" value="Load Timeline">
+        <br>
+        <textarea id="inOutString"></textarea>
+        <br>
+        
+    </div>
+    
+    <div>
+        Note:
+        <ul>
+            <li>First period is the master period, so if you change its start or end time it will rescale the whole thing.</li>
+        </ul>
+    </div>
+
+
+</body>
+
+
+<script>
+
+    timeline = new uTimeline({
+        startTime: -4500000,
+        endTime: 0,
+        description: "Earth History",
+        controlElementId: "workArea",
+        draw2dElementId: "area2d",
+    });
+
+    // svg timeline:
+    // timeline.draw2d(
+    //     params = {
+    //         divId:"area2d",
+    //     }, 
+    //     svgParams = {
+            
+    //     }
+    // );
+    
+
+    
+
+
+// Set up 3d element
+    u3x = new ux3d("x3Spot", {
+        width: "800px",
+        height: "500px"
+    });
+    u3x.addLight({
+        direction: "-1, -1, 0",
+        intensity: 0.5
+    })
+
+
+    // Add shapes here:
+
+    //cube
+    floor = addBox(3.75,0.5,10.25);
+    floor.setColor(0, 0, 200);
+    u3x.add(floor);
+
+    leftwell = addBox(0.25,2.5,10.25);
+    leftwell.setColor(100,0,100);
+    leftwell.translate(-1.75,1.5,0);
+    u3x.add(leftwell);
+
+    rightwell = addBox(0.25,2.5,10.25);
+    rightwell.setColor(100,0,100);
+    rightwell.translate(1.75,1.5,0);
+    rightwell.setTransparency(0.6)
+    u3x.add(rightwell);
+
+    // image1 = addBox (0.30,0.61,0.91);
+    // image1.setColor(200,200,200);
+    // image1.translate(-1.7,1.5,4.5);
+    // u3x.add(image1);
+
+    image2 = addBox (0.30,0.61,0.91);
+    image2.setColor(0,300,100);
+    image2.translate(1.7,1.5,4.5);
+    u3x.add(image2);
+
+    // image3 = addBox (0.30,0.61,0.91);
+    // image3.setColor(200,50,100);
+    // image3.translate(-1.7,1.5,3.5);
+    // u3x.add(image3);
+    panels=[]
+    for (let i=0;i<10;i++){
+        p = addBox (0.30,0.61,0.91);
+        p.setColor(200,200,200);
+        p.translate(-1.7,1.5,-i+4.5);
+        u3x.add(p);
+        panels.push(p)
+    }
+
+    panels[2].setColor(0,300,0);
+    
+    panels[4].addVideo("./videos/320533_tiny.mp4");
+
+    panels[7].addTexture("./images/moon-200.jpeg");
+
+
+    panels[1].addTexture("./images/TimelineDrawings_1_2x3-600.png")
+
+    panels[0].addVideo("./videos/ParallelTimelinesVideo.mp4")
+
+    // leave the rest alone for now
+
+    //AXES
+    xyzAxes = new uAxes();
+    xyzAxes.translate(0,-2, 0);
+    u3x.add(xyzAxes);
+
+
+
+    // Views
+    view0 = new uViewpoint({
+        id:"startView",
+        description: "doorView",
+        orientation:"0,1,0,0.1",
+        position:"1, 1.5, 10",
+        fieldofview: "0.78540",
+        centerofrotation: "0,1.5,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+
+    view1 = new uViewpoint({
+        id:"doorView",
+        description: "startView",
+        orientation:"0,1,0,1.57",
+        position:"1.75, 1.5, 0",
+        fieldofview: "0.78540",
+        centerofrotation: "-2,1.5,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+
+
+    view2 = new uViewpoint({
+        id:"topView",
+        description: "topView",
+        orientation:"-0.98675 0.16035 0.02462 1.28837",
+        position:"1.36474 9.50507 2.79127",
+        fieldofview: "0.78540",
+        centerofrotation: "0,0,0",
+        znear:"-1",
+        zfar:"-1"
+    });
+
+    // u3x.addViewpoint({
+    //     id:"firstPanelView",
+    //     description: "firstPanelViewA",
+    //     orientation:"0,1,0,1.57",
+    //     position:"1.75, 1.5, 5",
+    //     fieldofview: "0.78540",
+    //     centerofrotation: "-2,1.5,0",
+    //     znear:"-1",
+    //     zfar:"-1"
+    // })
+    // vA = document.getElementById("viewArea")
+    // u3x.viewpoints[0].addButton(vA);
+
+    u3x.add(view0);
+    u3x.add(view1);
+    u3x.add(view2);
+
+
+    // leave the rest alone for now
+
+
+
+
+
+    
+
+  document.onload = function() {
+
+    //making the view buttons work
+    viewButtons = document.getElementsByClassName('view');
+    
+    for (let i =0; i<viewButtons.length; i++){
+        let element = viewButtons[i];
+        element.addEventListener("click", function(){
+            vid = element.id.replace("_", "");
+            console.log("vid", vid)
+            document.getElementById(vid).setAttribute("set_bind", 'true');
+        })
+    }
+
+    let outButton = document.getElementById("writeOut");
+
+    outButton.addEventListener("click", function(){
+        console.log("write")
+        let outputString = document.getElementById("inOutString");
+        outputString.value = timeline.write();
+        console.log(outputString);
+    })
+
+    loadButton = document.getElementById("loadButton");
+    loadButton.addEventListener("click", function(){
+        let inputString = document.getElementById("inOutString").value;
+
+
+        timeline = loadTimeline(inputString);
+    })
+
+
+      
+
+
+
+    // panel viewpoint buttons
+    let vA = document.getElementById("viewArea")
+    for (let i =0; i < panels.length; i++){
+        let pos = panels[i].getPosition(vec=true);
+        pos[0] = 1.75;
+        pos = `${pos[0]} ${pos[1]} ${pos[2]}`;
+        u3x.addViewpoint({
+            //id:"firstPanelView",
+            description: `vPt${i}`,
+            orientation:"0,1,0,1.57",
+            position: pos,
+            fieldofview: "0.78540",
+            centerofrotation: "-2,1.5,0",
+            znear:"-1",
+            zfar:"-1"
+        })
+        u3x.viewpoints[u3x.viewpoints.length-1].addButton(vA);
+    }
+
+    
+
+    panels[0].video.setClickListener(panels[0]);
+    panels[4].video.setClickListener(panels[4]);
+    panels[2].addLink("https://soriki.com/x3d");
+    
+
+
+  };
+    
+</script>
+
+
+
+
+</html>
+
