@@ -87,10 +87,15 @@ class uTimeline {
 
         if (this.params.draw3dMap) {
             this.timeline3d = new timeline3dModel({
+                timeline: this,
                 divId: this.params.draw3dElementId
             })
         }
 
+    }
+
+    update3d(){
+        this.timeline3d.update(this.periodsList);
     }
 
     write(){
@@ -448,6 +453,9 @@ class timelinePeriod {
         this.endTime = this.params.endTime;
         this.description = this.params.description;
         this.id = this.params.id;
+
+        // for 3d panel
+        this.panel = '';
     }
     makeHtmlBar(){
 
@@ -682,6 +690,7 @@ function makeHallTimeline(u3x){
 class timeline3dModel{
     constructor(params={}){
         let defaults = {
+            timeline: "",
             divId: "",
             hallHeight: 2.5,
             hallWidth: 3.75,
@@ -701,16 +710,22 @@ class timeline3dModel{
         this.element.style.border = '1px solid green'
 
         // ease of use variable names
+        this.timeline = this.params.timeline;
+
         this.hallHeight = this.params.hallHeight;
         this.hallWidth = this.params.hallWidth;
         this.hallLength = this.params.panelLength + 1;
+
+        //panel prameters
         this.panelLength = this.params.panelLength;
         this.panelHeight = this.params.panelHeight;
         this.panelHeight = this.params.panelHeight;
+        this.panelElevation = 1.5; //height above floor
+        this.panel_xOffset = -this.hallWidth/2+this.params.wallWidth;
 
         // ux3d instance
         this.u3dModel = new ux3d("x3Spot", {
-            width: "95%",
+            width: "100%",
             height: "100%"
         });
 
@@ -725,17 +740,17 @@ class timeline3dModel{
         this.u3dModel.add(this.leftWall);
 
         // View down hallway
-        let view0 = new uViewpoint({
+        this.u3dModel.addViewpoint ({
             id:"startView",
             description: "startView",
-            orientation:"0,1,0,0.1",
+            orientation:"0,1,0,0.2",
             position:"1, 1.5, 12",
             fieldofview: "0.78540",
-            centerofrotation: "0,1.5,0",
+            centerofrotation: "-1,1.5,0",
             znear:"-1",
             zfar:"-1"
         })
-        this.u3dModel.add(view0);
+        //this.u3dModel.add(view0);
 
         // add track lighting
         this.u3dModel.addLight({
@@ -743,14 +758,37 @@ class timeline3dModel{
             intensity: 0.5
         })
 
+
+
+        //this.update2dMap();
+        this.addMainPanel()
+
+        this.update();
+    
+    }
+
+    update(){
+        //delete old panels
+        for (let period of this.timeline.periodsList) {
+            this.u3dModel.removeByIndex(period.panel.index);
+        }
+
+        // add panels back in
+        this.addMainPanel()
+
+        for (let period of this.timeline.periodsList) {
+
+        }
+    }
+
+    addMainPanel(){
         // main whiteboard panel
         this.fullPanel = addBox(0.1, this.panelHeight, this.panelLength);
         this.fullPanel.setColor(250,250,250);
-        this.fullPanel.translate(-this.hallWidth/2+this.params.wallWidth,1.5, 0)
+        this.fullPanel.translate(this.panel_xOffset,1.5, 0)
         this.u3dModel.add(this.fullPanel)
 
-        //this.update2dMap();
-    
+        this.timeline.periodsList[0].panel = this.fullPanel;
     }
 
 

@@ -54,9 +54,23 @@ class ux3d {
 
     add(obj){
         this.primitives.push(obj);
+        this.primitives[this.primitives.length-1].index = this.primitives.length-1;
         //let transform = obj.transform;
         this.transforms.push(obj.transform);
         this.scene.div.appendChild(obj.assemble());
+    }
+
+    removeByIndex(i){
+        console.log("remove:", i, this.primitives.length)
+        this.primitives[i].remove();
+        this.primitives.splice(i, 1);
+        console.log("remove:", i, this.primitives.length)
+        // reindex
+        let n = 0;
+        for (let prim of this.primitives){
+            prim.index = n;
+            n++;
+        }
     }
 
     setNavigationMode(navMode){
@@ -323,6 +337,10 @@ class uPrimitive {
         this.transform.appendChild(this.shape);
 
         return this.transform.div;
+    }
+
+    remove(){
+        this.transform.div.remove();
     }
 
     addProximitySensor(size=5){
