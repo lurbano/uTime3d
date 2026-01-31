@@ -683,38 +683,53 @@ class timeline3dModel{
     constructor(params={}){
         let defaults = {
             divId: "",
-            maxBarLength: 10,
+            hallHeight: 2.5,
+            hallWidth: 3.75,
+            wallWidth: 0.2,
+            maxBarLength: 10, // hall length
             xOffset: -1.7, //left shift (-)
             yOffset: 1.5, //height
-            barHeight: 20,
-            barGap: 5,
-            eventTagWidth: 20,
+            panelHeight: 0.9,
+            panelLength: 10,
+            //barHeight: 20,
+            //barGap: 5,
+            eventTagWidth: 20
         }
         this.params = {...defaults, ...params};
 
         this.element = document.getElementById(this.params.divId);
         this.element.style.border = '1px solid green'
 
+        // ease of use variable names
+        this.hallHeight = this.params.hallHeight;
+        this.hallWidth = this.params.hallWidth;
+        this.hallLength = this.params.panelLength + 1;
+        this.panelLength = this.params.panelLength;
+        this.panelHeight = this.params.panelHeight;
+        this.panelHeight = this.params.panelHeight;
+
+        // ux3d instance
         this.u3dModel = new ux3d("x3Spot", {
             width: "95%",
             height: "100%"
         });
 
-        let leftWall = addBox(3.75,0.5,10.25);
-        leftWall.setColor(0, 0, 200);
-        this.u3dModel.add(leftWall);
+        //floor and wall
+        this.floor = addBox(this.hallWidth,0.5,this.hallLength);
+        this.floor.setColor(0, 0, 200);
+        this.u3dModel.add(this.floor);
 
-        let floor = addBox(0.25,2.5,10.25);
-        floor.setColor(100,0,100);
-        floor.translate(-1.75,1.5,0);
-        this.u3dModel.add(floor);
+        this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
+        this.leftWall.setColor(100,0,100);
+        this.leftWall.translate(-1.75,1.5,0);
+        this.u3dModel.add(this.leftWall);
 
-
+        // View down hallway
         let view0 = new uViewpoint({
             id:"startView",
             description: "startView",
             orientation:"0,1,0,0.1",
-            position:"1, 1.5, 10",
+            position:"1, 1.5, 12",
             fieldofview: "0.78540",
             centerofrotation: "0,1.5,0",
             znear:"-1",
@@ -727,6 +742,12 @@ class timeline3dModel{
             direction: "-1, -1, 0",
             intensity: 0.5
         })
+
+        // main whiteboard panel
+        this.fullPanel = addBox(0.1, this.panelHeight, this.panelLength);
+        this.fullPanel.setColor(250,250,250);
+        this.fullPanel.translate(-this.hallWidth/2+this.params.wallWidth,1.5, 0)
+        this.u3dModel.add(this.fullPanel)
 
         //this.update2dMap();
     
