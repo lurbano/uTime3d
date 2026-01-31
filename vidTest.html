@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>X3DOM Box with Video Texture</title>
+  <script src="https://www.x3dom.org/download/x3dom.js"></script>
+  <link rel="stylesheet" href="https://www.x3dom.org/download/x3dom.css">
+  <style>
+    body { margin: 0; }
+    x3d { width: 100vw; height: 100vh; display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Video element (hidden) -->
+<video id="videoTexture" autoplay loop muted playsinline style="display:none">
+  <source src="./videos/320533_tiny.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<!-- X3D Scene -->
+<x3d>
+  <scene>
+    <shape>
+      <appearance>
+        <texture>
+          <movieTexture url="#videoTexture"></movieTexture>
+        </texture>
+      </appearance>
+      <box size="2 2 2"></box>
+    </shape>
+
+    <!-- Simple camera and light -->
+    <viewpoint position="0 0 5" orientation="0 0 0 0"></viewpoint>
+    <directionalLight direction="-1 -1 -1" intensity="1"></directionalLight>
+  </scene>
+</x3d>
+
+<script>
+  // Ensure video plays and updates the X3DOM texture
+  const video = document.getElementById('videoTexture');
+  video.play().catch(e => console.log('Autoplay prevented:', e));
+</script>
+
+</body>
+</html>

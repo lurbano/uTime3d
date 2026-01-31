@@ -401,7 +401,7 @@ class uPrimitive {
 
     addVideo(fname){
         this.video = new uMovieTexture({
-            url: fname
+            USE: fname
         })
 
         this.appearance.appendChild(this.video);
@@ -521,7 +521,7 @@ class uAudioclip {
 class uMovieTexture{
     constructor(params={}){
         let defaults = {
-            loop: false
+            //loop: false
         }
         this.params = {...defaults, ...params};
         this.div = document.createElement("MovieTexture");
