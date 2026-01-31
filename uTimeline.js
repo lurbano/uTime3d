@@ -1,5 +1,6 @@
 function loadTimeline(str){
     
+    //get data from string input
     let data = JSON.parse(str);
 
     let masterPeriod = data['periods'][0];
@@ -49,7 +50,9 @@ class uTimeline {
             controlElementId: "workArea",
             draw2dElementId: "area2d",
             draw2dMap: true,
-            description: ""
+            description: "",
+            draw3dElementId: "x3Spot",
+            draw3dMap: true,
         }
         this.params = {...defaults, ...params};
 
@@ -79,6 +82,12 @@ class uTimeline {
         if (this.draw2dMap) {
             this.add2dMap({
                 divId: this.params.draw2dElementId,
+            })
+        }
+
+        if (this.params.draw3dMap) {
+            this.timeline3d = new timeline3dModel({
+                divId: this.params.draw3dElementId
             })
         }
 
@@ -213,6 +222,10 @@ class uTimeline {
             this.map2dEventElement.appendChild(event.tag);
         }
     }
+
+    
+
+
 
     scaleTime(t, maxLength){
         let factor = Math.abs(t)/this.totalTimePeriod;
@@ -626,3 +639,98 @@ class svgTimeline {
 //         this.parentElement.appendChild(this.element);
 //     }
 // }
+
+
+function makeHallTimeline(u3x){
+
+    u3x.addLight({
+        direction: "-1, -1, 0",
+        intensity: 0.5
+    })
+
+    //cube
+    floor = addBox(3.75,0.5,10.25);
+    floor.setColor(0, 0, 200);
+    u3x.add(floor);
+
+    leftwell = addBox(0.25,2.5,10.25);
+    leftwell.setColor(100,0,100);
+    leftwell.translate(-1.75,1.5,0);
+    u3x.add(leftwell);
+
+    // rightwell = addBox(0.25,2.5,10.25);
+    // rightwell.setColor(100,0,100);
+    // rightwell.translate(1.75,1.5,0);
+    // rightwell.setTransparency(0.6)
+    // u3x.add(rightwell);
+
+    // head-height downhall viewpoint
+    let view0 = new uViewpoint({
+        id:"startView",
+        description: "doorView",
+        orientation:"0,1,0,0.1",
+        position:"1, 1.5, 10",
+        fieldofview: "0.78540",
+        centerofrotation: "0,1.5,0",
+        znear:"-1",
+        zfar:"-1"
+    })
+    u3x.add(view0);
+}
+
+
+class timeline3dModel{
+    constructor(params={}){
+        let defaults = {
+            divId: "",
+            maxBarLength: 10,
+            xOffset: -1.7, //left shift (-)
+            yOffset: 1.5, //height
+            barHeight: 20,
+            barGap: 5,
+            eventTagWidth: 20,
+        }
+        this.params = {...defaults, ...params};
+
+        this.element = document.getElementById(this.params.divId);
+        this.element.style.border = '1px solid green'
+
+        this.u3dModel = new ux3d("x3Spot", {
+            width: "95%",
+            height: "100%"
+        });
+
+        let leftWall = addBox(3.75,0.5,10.25);
+        leftWall.setColor(0, 0, 200);
+        this.u3dModel.add(leftWall);
+
+        let floor = addBox(0.25,2.5,10.25);
+        floor.setColor(100,0,100);
+        floor.translate(-1.75,1.5,0);
+        this.u3dModel.add(floor);
+
+
+        let view0 = new uViewpoint({
+            id:"startView",
+            description: "startView",
+            orientation:"0,1,0,0.1",
+            position:"1, 1.5, 10",
+            fieldofview: "0.78540",
+            centerofrotation: "0,1.5,0",
+            znear:"-1",
+            zfar:"-1"
+        })
+        this.u3dModel.add(view0);
+
+        // add track lighting
+        this.u3dModel.addLight({
+            direction: "-1, -1, 0",
+            intensity: 0.5
+        })
+
+        //this.update2dMap();
+    
+    }
+
+
+}
