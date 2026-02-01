@@ -37,8 +37,26 @@ class ux3d {
 
         this.addOpenscadControls();
 
+        this.addViewpointButtonArea();
+
         this.setNavigationMode("walk");
 
+    }
+
+    addViewpointButtonArea(){
+        this.viewpointButtonArea = document.createElement("div");
+        // this.viewpointButtonArea.innerHTML = "Views";
+        this.hostDiv.before(this.viewpointButtonArea);
+
+        this.vpAreas = {}
+
+        this.vpAreas["general"] = document.createElement("div");
+        this.vpAreas["general"].innerHTML = "gen";
+        this.viewpointButtonArea.appendChild(this.vpAreas['general']);
+
+        this.vpAreas["panel"] = document.createElement("div");
+        this.vpAreas["panel"].innerHTML = "panel";
+        this.viewpointButtonArea.appendChild(this.vpAreas["panel"]);
     }
 
     // insertInto(hostDivId){
@@ -46,8 +64,27 @@ class ux3d {
     //     this.hostDiv.appendChild(this.elem);
     // }
 
-    addViewpoint(params={}){
-        let v = new uViewpoint(params);
+    addViewpoint(params={}, addButton=false, buttonDiv="general"){
+        let defaults = {
+            //bind: false,
+            description: 'none',
+            position: "0. 0. 10.",
+            orientation: "0. 0. 0. 0.",
+            centerOfRotation: "0. 0. 0.",
+            fieldOfView:"0.78540",
+        }
+        this.params = {...defaults, ...params};
+        console.log("add viewpoint", addButton, buttonDiv)
+
+        if (addButton) {
+            if (buttonDiv === "general" || buttonDiv === "panel") {
+                buttonDiv = this.vpAreas[buttonDiv];
+            } else {
+                buttonDiv = this.vpAreas["general"];
+            }
+        }
+
+        let v = new uViewpoint(params, addButton, buttonDiv);
         this.viewpoints.push(v);
         this.scene.div.appendChild(v.assemble());
     }
@@ -891,20 +928,24 @@ class uProximitySensor{
 
 
 class uViewpoint{
-    constructor(params={}){
+    constructor(params={},addButton=false, buttonArea="general"){
         let defaults = {
             //bind: false,
             description: 'none',
             position: "0. 0. 10.",
             orientation: "0. 0. 0. 0.",
             centerOfRotation: "0. 0. 0.",
-            fieldOfView:"0.78540"
+            fieldOfView:"0.78540",
         }
         this.params = {...defaults, ...params};
         this.div = document.createElement('viewpoint');
         setAttributes(this.div, this.params);
         //this.div.setAttribute("id", "viewpointTest");
         this.description = this.params.description;
+
+        if (addButton){
+            this.addButton(buttonArea)
+        }
     }
 
     assemble(){
@@ -926,7 +967,14 @@ class uViewpoint{
         this.button.addEventListener("click", () => {
             this.bind();
         })
-        targetDiv.appendChild(this.button);
+
+        if (typeof targetDiv === 'string' || targetDiv instanceof String){
+            targetDiv.getElementById(targetDiv);
+        }
+
+        if (targetDiv) {
+            targetDiv.appendChild(this.button);
+        }
     }
 }
 

@@ -649,42 +649,42 @@ class svgTimeline {
 // }
 
 
-function makeHallTimeline(u3x){
+// function makeHallTimeline(u3x){
 
-    u3x.addLight({
-        direction: "-1, -1, 0",
-        intensity: 0.5
-    })
+//     u3x.addLight({
+//         direction: "-1, -1, 0",
+//         intensity: 0.5
+//     })
 
-    //cube
-    floor = addBox(3.75,0.5,10.25);
-    floor.setColor(0, 0, 200);
-    u3x.add(floor);
+//     //cube
+//     floor = addBox(3.75,0.5,10.25);
+//     floor.setColor(0, 0, 200);
+//     u3x.add(floor);
 
-    leftwell = addBox(0.25,2.5,10.25);
-    leftwell.setColor(100,0,100);
-    leftwell.translate(-1.75,1.5,0);
-    u3x.add(leftwell);
+//     leftwell = addBox(0.25,2.5,10.25);
+//     leftwell.setColor(100,0,100);
+//     leftwell.translate(-1.75,1.5,0);
+//     u3x.add(leftwell);
 
-    // rightwell = addBox(0.25,2.5,10.25);
-    // rightwell.setColor(100,0,100);
-    // rightwell.translate(1.75,1.5,0);
-    // rightwell.setTransparency(0.6)
-    // u3x.add(rightwell);
+//     // rightwell = addBox(0.25,2.5,10.25);
+//     // rightwell.setColor(100,0,100);
+//     // rightwell.translate(1.75,1.5,0);
+//     // rightwell.setTransparency(0.6)
+//     // u3x.add(rightwell);
 
-    // head-height downhall viewpoint
-    let view0 = new uViewpoint({
-        id:"startView",
-        description: "doorView",
-        orientation:"0,1,0,0.1",
-        position:"1, 1.5, 10",
-        fieldofview: "0.78540",
-        centerofrotation: "0,1.5,0",
-        znear:"-1",
-        zfar:"-1"
-    })
-    u3x.add(view0);
-}
+//     // head-height downhall viewpoint
+//     let view0 = new uViewpoint({
+//         id:"startView",
+//         description: "doorView",
+//         orientation:"0,1,0,0.1",
+//         position:"1, 1.5, 10",
+//         fieldofview: "0.78540",
+//         centerofrotation: "0,1.5,0",
+//         znear:"-1",
+//         zfar:"-1"
+//     })
+//     u3x.add(view0);
+// }
 
 
 class timeline3dModel{
@@ -740,7 +740,7 @@ class timeline3dModel{
         this.u3dModel.add(this.leftWall);
 
         // View down hallway
-        this.u3dModel.addViewpoint ({
+        this.u3dModel.addViewpoint({
             id:"startView",
             description: "startView",
             orientation:"0,1,0,0.2",
@@ -749,8 +749,19 @@ class timeline3dModel{
             centerofrotation: "-1,1.5,0",
             znear:"-1",
             zfar:"-1"
-        })
-        //this.u3dModel.add(view0);
+        }, true)
+        
+        // Perpendicular View
+        this.u3dModel.addViewpoint({
+            id:"PerpView",
+            description: "PerpView",
+            orientation:"0,1,0,1.57",
+            position:`${this.panelLength*1.25}, 1.5, 0`,
+            fieldofview: "0.78540",
+            centerofrotation: "-2,1.5,0",
+            znear:"-1",
+            zfar:"-1"
+        }, true)
 
         // add track lighting
         this.u3dModel.addLight({
