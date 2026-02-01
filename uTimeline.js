@@ -81,6 +81,8 @@ class uTimeline {
 
         this.addControls(this.params.controlElementId);
 
+        this.addTimelineInOutControls();
+
         if (this.draw2dMap) {
             this.add2dMap({
                 divId: this.params.draw2dElementId,
@@ -99,6 +101,8 @@ class uTimeline {
     update3d(){
         this.timeline3d.update();
     }
+
+    
 
     write(){
         let output = {
@@ -246,14 +250,18 @@ class uTimeline {
 
 
     addControls(divId=""){
-        //console.log(divId)
+        console.log("controls id:", divId)
         this.controlsElement = document.getElementById(divId);
         this.controlsElement.innerHTML = "";
         
+        this.epControlsElement = document.createElement("div");
+        this.controlsElement.appendChild(this.epControlsElement)
 
-        this.controlsElement.style.display = "grid";
-        this.controlsElement.style.gridTemplateColumns = "50% 50%";
-        this.controlsElement.style.gap =  "5px";
+        this.epControlsElement.style.display = "grid";
+        this.epControlsElement.style.gridTemplateColumns = "50% 50%";
+        this.epControlsElement.style.gap =  "5px";
+        this.epControlsElement.style.borderBottom = '1px solid black';
+        this.epControlsElement.style.marginBottom = '5px';
 
         // events panel
         this.eventsListArea = document.createElement("div");
@@ -286,12 +294,51 @@ class uTimeline {
         this.periodsControlArea.appendChild(this.addPeriodButton);
         this.periodsControlArea.appendChild(this.periodsListArea);
 
-        this.controlsElement.appendChild(this.periodsControlArea);
-        this.controlsElement.appendChild(this.eventsControlArea);
+        this.epControlsElement.appendChild(this.periodsControlArea);
+        this.epControlsElement.appendChild(this.eventsControlArea);
         
         // this.periodsControlArea.appendChild(this.fullTime.makeHtmlInputs());
 
         this.updateControls();
+
+    }
+
+    addTimelineInOutControls(){
+        this.timelineArea = document.createElement('div');
+        this.epControlsElement.after(this.timelineArea);
+
+        let outputBlock = document.createElement("div")
+        this.timelineStringArea = document.createElement("textarea");
+        this.timelineStringArea.style.width = "90%";
+
+        outputBlock.appendChild(this.timelineStringArea)
+        outputBlock.style.width="100%";
+
+
+        this.timelineOutputButton = document.createElement("input");
+        this.timelineOutputButton.setAttribute("type", "button");
+        this.timelineOutputButton.setAttribute("value", "Write Timeline");
+
+        this.timelineReadButton = document.createElement("input");
+        this.timelineReadButton.setAttribute("type", "button");
+        this.timelineReadButton.setAttribute("value", "Read Timeline");
+
+        this.timelineArea.appendChild(this.timelineOutputButton);
+        this.timelineArea.appendChild(this.timelineReadButton);
+        this.timelineArea.appendChild(outputBlock);
+
+        this.timelineOutputButton.addEventListener("click", () => {
+            let str = this.write();
+            console.log(str);
+            this.timelineStringArea.value = str;
+        });
+
+        this.timelineReadButton.addEventListener("click", () => {
+            let inputString = this.timelineStringArea.value;
+            this.timeline = loadTimeline(inputString);
+        })
+
+        
 
     }
 
@@ -786,18 +833,8 @@ class timeline3dModel{
             if (period.panel){
                 this.u3dModel.removeByIndex(period.panel.index);
             }
-            
-            let x = this.panel_xOffset;
-            if (i === 0){
-                x = x - 0.01;
-            }
-            console.log("panel:", period, x)
-            
-            let y = (this.panelLength/2) - this.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
 
-
-
-            this.addPanel(period, x, this.panelElevation, y)
+            this.addPanel(period)
 
             if (i !== 0) period.panel.setColor(100,0,0);
         }

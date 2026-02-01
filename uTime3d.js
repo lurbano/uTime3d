@@ -36,12 +36,15 @@ class ux3d {
         this.hostDiv.appendChild(this.elem);
 
         this.addOpenscadControls();
+        //this.addTimelineInOutControls();
 
         this.addViewpointButtonArea();
 
         this.setNavigationMode("walk");
 
     }
+
+    
 
     addViewpointButtonArea(){
         this.viewpointButtonArea = document.createElement("div");
@@ -151,6 +154,7 @@ class ux3d {
         this.openscadButton.addEventListener("click", () => {
             let scale = this.openscadScale.value;
             let scadCode = this.toOpenSCAD(scale=scale);
+            console.log("openscadOutput:", scale )
             this.openscadOutput.innerText = scadCode;
         })
         
