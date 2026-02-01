@@ -97,7 +97,7 @@ class ux3d {
         this.scene.div.appendChild(obj.assemble());
     }
 
-    removeByIndex(i){
+    removeByIndex(i){ // remove primitive based on the index in the primitives array
         
         this.primitives[i].remove();
         this.primitives.splice(i, 1);

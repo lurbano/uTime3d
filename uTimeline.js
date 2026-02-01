@@ -324,6 +324,7 @@ class uTimeline {
         
         this.updateControls();
         this.update2dMap();
+        this.update3d();
 
         
     }
@@ -381,6 +382,7 @@ class uTimeline {
 
         this.updateControls();
         this.update2dMap();
+        this.update3d();
     }
 }
 
@@ -475,8 +477,8 @@ class timelinePeriod {
         this.startInput.setAttribute("value", this.startTime);
         this.inputBlock.appendChild(this.startInput);
         this.startInput.addEventListener('change', (e) => {
-            this.startTime = e.target.value;
-            console.log("id:", this.id)
+            this.startTime = parseFloat(e.target.value);
+            
             if (this.id === "fullTime") {
                 this.timeline.update({
                     newStartTime: this.startTime
@@ -484,7 +486,7 @@ class timelinePeriod {
             } else {
                 this.timeline.update();
             }
-            console.log("input:", this.startTime, this.endTime)
+            
         })
 
         this.endInput = document.createElement('input');
@@ -492,7 +494,7 @@ class timelinePeriod {
         this.endInput.setAttribute("value", this.endTime);
         this.inputBlock.appendChild(this.endInput);
         this.endInput.addEventListener('change', (e) => {
-            this.endTime = e.target.value;
+            this.endTime = parseFloat(e.target.value);
             this.timeline.update();
         })
 
@@ -789,28 +791,54 @@ class timeline3dModel{
             if (i === 0){
                 x = x - 0.01;
             }
-            console.log("panel:", period.panel.index, x)
+            console.log("panel:", period, x)
             
-            period.panel = this.addPanel(x,this.panelElevation, 0)
+            let y = (this.panelLength/2) - this.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
+
+
+
+            this.addPanel(period, x, this.panelElevation, y)
+
+            if (i !== 0) period.panel.setColor(100,0,0);
         }
 
 
     }
 
-    // addMainPanel(){
-    //     this.fullPanel = this.addPanel(this.panel_xOffset+1, 0);
-    //     this.timeline.periodsList[0].panel = this.fullPanel;
+    // panelzOffset(period){
+
     // }
 
-    addPanel(xPos, yPos, zPos){
-        console.log(xPos, zPos);
+    addPanel(period){
+        //console.log(xPos, zPos);
 
-        let panel = addBox(this.panelWidth, this.panelHeight, this.panelLength);
+        
+
+        let x = this.panel_xOffset;
+        let y = this.panelElevation;
+
+        let z = (this.panelLength/2) - this.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
+
+        let dt = period.endTime - period.startTime;
+
+        let panelLength = this.scaleTime(dt, this.panelLength);
+
+        //offset main timeline a little
+        if (period.id === "fullTime") x-=0.01;
+
+        let panel = addBox(this.panelWidth, this.panelHeight, panelLength);
         panel.setColor(200,200,200);
-        panel.translate(xPos,yPos, zPos);
+        panel.translate(x,y, z);
         this.u3dModel.add(panel);
 
-        return panel;
+        period.panel = panel;
+    }
+
+    scaleTime(t, maxLength){
+        let totalTime = this.timeline.totalTimePeriod;
+
+        let factor = Math.abs(t)/totalTime;
+        return maxLength * factor;
     }
 
 
