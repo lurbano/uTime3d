@@ -67,6 +67,8 @@ class uTimeline {
 
         this.draw2dMap = this.params.draw2dMap;
 
+        this.draw3dMap = this.params.draw3dMap;
+
         // initial, full time period
         this.fullTime = new timelinePeriod({
             startTime: this.startTime, 
@@ -85,7 +87,7 @@ class uTimeline {
             })
         }
 
-        if (this.params.draw3dMap) {
+        if (this.draw3dMap) {
             this.timeline3d = new timeline3dModel({
                 timeline: this,
                 divId: this.params.draw3dElementId
@@ -95,7 +97,7 @@ class uTimeline {
     }
 
     update3d(){
-        this.timeline3d.update(this.periodsList);
+        this.timeline3d.update();
     }
 
     write(){
@@ -181,8 +183,8 @@ class uTimeline {
             pDiv.style.height = `${this.params_2d.barHeight}px`; //this.params_2d.barHeight;
             let barLength=this.scaleTime(period.endTime-period.startTime, this.params_2d.maxBarLength);
             pDiv.style.width = `${barLength}px`;
-            // pDiv.setAttribute("height", this.params_2d.barHeight);
-            // pDiv.setAttribute("width", "100px");
+            
+            // Add bar to period
             period.bar = pDiv;
             period.bar.innerHTML = period.description;
             period.bar.style.position = "absolute";
@@ -698,8 +700,9 @@ class timeline3dModel{
             maxBarLength: 10, // hall length
             xOffset: -1.7, //left shift (-)
             yOffset: 1.5, //height
-            panelHeight: 0.9,
+            panelHeight: 0.6,
             panelLength: 10,
+            panelWidth: 0.1,
             //barHeight: 20,
             //barGap: 5,
             eventTagWidth: 20
@@ -720,6 +723,7 @@ class timeline3dModel{
         this.panelLength = this.params.panelLength;
         this.panelHeight = this.params.panelHeight;
         this.panelHeight = this.params.panelHeight;
+        this.panelWidth = this.params.panelWidth;
         this.panelElevation = 1.5; //height above floor
         this.panel_xOffset = -this.hallWidth/2+this.params.wallWidth;
 
@@ -769,38 +773,60 @@ class timeline3dModel{
             intensity: 0.5
         })
 
-
-
-        //this.update2dMap();
-        this.addMainPanel()
-
         this.update();
     
     }
 
     update(){
         //delete old panels
-        for (let period of this.timeline.periodsList) {
-            this.u3dModel.removeByIndex(period.panel.index);
+        for (let [i, period] of this.timeline.periodsList.entries()) {
+            
+            if (period.panel){
+                this.u3dModel.removeByIndex(period.panel.index);
+            }
+            
+            let x = this.panel_xOffset;
+            if (i === 0){
+                x = x - 0.01;
+            }
+            console.log("panel:", period.panel.index, x)
+            
+            period.panel = this.addPanel(x,this.panelElevation, 0)
         }
 
-        // add panels back in
-        this.addMainPanel()
 
-        for (let period of this.timeline.periodsList) {
-
-        }
     }
 
-    addMainPanel(){
-        // main whiteboard panel
-        this.fullPanel = addBox(0.1, this.panelHeight, this.panelLength);
-        this.fullPanel.setColor(250,250,250);
-        this.fullPanel.translate(this.panel_xOffset,1.5, 0)
-        this.u3dModel.add(this.fullPanel)
+    // addMainPanel(){
+    //     this.fullPanel = this.addPanel(this.panel_xOffset+1, 0);
+    //     this.timeline.periodsList[0].panel = this.fullPanel;
+    // }
 
-        this.timeline.periodsList[0].panel = this.fullPanel;
+    addPanel(xPos, yPos, zPos){
+        console.log(xPos, zPos);
+
+        let panel = addBox(this.panelWidth, this.panelHeight, this.panelLength);
+        panel.setColor(200,200,200);
+        panel.translate(xPos,yPos, zPos);
+        this.u3dModel.add(panel);
+
+        return panel;
     }
 
 
 }
+
+// class panel3d {
+//     constructor(params={}){
+//         let defaults = {
+//             panelWidth: 0.1,
+//             panelHeight: 0.6,
+//             panelLength: 0.9,
+//             position: [0, 0, 0],
+//             color: [200,200,150]
+//         }
+//         this.params = {...defaults, ...params};
+
+//         this.box = addBox(this.params.panelWidth, this.params.panelHeight, this.params.panelLength);
+//     }
+// }

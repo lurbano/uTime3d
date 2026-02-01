@@ -98,7 +98,7 @@ class ux3d {
     }
 
     removeByIndex(i){
-        console.log("remove:", i, this.primitives.length)
+        
         this.primitives[i].remove();
         this.primitives.splice(i, 1);
         console.log("remove:", i, this.primitives.length)
