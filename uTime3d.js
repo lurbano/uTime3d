@@ -19,13 +19,10 @@ class ux3d {
             l_openscad: true,
         }
 
-        console.log("hostDivId:", hostDivId)
-
         this.params = {...defaults, ...params};
 
         this.elem = document.createElement("x3d");
         setAttributes(this.elem, this.params);
-        console.log("x3d:", this.elem);
         this.elem.style.width = this.params.width;
         this.elem.style.height = this.params.height;
 
@@ -33,7 +30,7 @@ class ux3d {
 
         this.elem.appendChild(this.scene.div);
         this.primitives = [];
-        this.transforms = [];
+        //this.transforms = [];
         this.viewpoints = [];
         
         this.hostDiv = document.getElementById(hostDivId);
@@ -93,8 +90,7 @@ class ux3d {
             fieldOfView:"0.78540",
         }
         this.params = {...defaults, ...params};
-        console.log("add viewpoint", addButton, buttonDiv)
-
+        
         if (addButton) {
             if (buttonDiv === "general" || buttonDiv === "panel") {
                 buttonDiv = this.vpAreas[buttonDiv];
@@ -111,8 +107,7 @@ class ux3d {
     add(obj){
         this.primitives.push(obj);
         this.primitives[this.primitives.length-1].index = this.primitives.length-1;
-        //let transform = obj.transform;
-        this.transforms.push(obj.transform);
+        //this.transforms.push(obj.transform);
         this.scene.div.appendChild(obj.assemble());
     }
 
@@ -192,15 +187,12 @@ class ux3d {
     }
 
     toOpenSCAD(scale = 10){
-        console.log("exporting OpenSCAD format", this.transforms.length)
+        //console.log("exporting OpenSCAD format", this.transforms.length)
         let scadString = '';
 
         for (let i=0; i<this.primitives.length; i++){
             let primitive = this.primitives[i]
-             //this.transforms[i];
-            //console.log("primitive", primitive.constructor.name)
-
-            
+        
             
             if (primitive !== undefined && typeof primitive.toOpenSCAD === 'function'){
                 let transform = this.primitives[i].transform;
@@ -248,6 +240,7 @@ class uScene {
         this.lights = []; //user defined lights in the scene
 
     }
+
 
     setNavigationMode(navMode) {
         this.navElem.div.setAttribute("type", navMode);

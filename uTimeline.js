@@ -1,48 +1,4 @@
-function loadTimeline(str){
-    
-    //get data from string input
-    let data = JSON.parse(str);
 
-    let masterPeriod = data['periods'][0];
-    for (let period of data.periods){
-        if (period.id==="fullTime"){
-            masterPeriod = period;
-        }
-    }
-    
-    let timeline =  new uTimeline({
-        startTime: masterPeriod.startTime,
-        endTime: masterPeriod.endTime,
-        description: masterPeriod.description,
-        controlElementId: data.params.controlElementId,
-        draw2dElementId: data.params.draw2dElementId,
-        draw2dMap: data.params.draw2dMap,
-        draw3dElementId: data.params.draw3dElementId,
-        draw3dMap: data.params.draw3dMap
-    });
-
-    //load periods
-    for (let period of data.periods){
-        //console.log(period)
-        if (period.id !== "fullTime"){
-            timeline.addPeriod(period);
-            // let p = timeline.periodsList[timeline.periodsList.length -1];
-            // p.startTime = period.startTime;
-            // p.endTime = period.endTime;
-            // p.description = period.description;
-            // p.id =period.id;
-        }
-    }
-
-    //load events
-    for (let event of data.events){
-
-        timeline.addEvent(event);
-        
-    }
-
-    return timeline;
-}
 
 class uTimeline {
     constructor(params={}){
@@ -58,6 +14,8 @@ class uTimeline {
             draw3dMap: true,
         }
         this.params = {...defaults, ...params};
+
+        console.log("timeline params:", this.params)
 
         this.startTime = this.params.startTime;
         this.endTime = this.params.endTime;
@@ -105,6 +63,47 @@ class uTimeline {
         this.timeline3d.update();
     }
 
+    
+    loadTimeline(str){
+        let data = JSON.parse(str);
+
+        
+        // remove periods
+        //this.periodsList = [];
+        // for (let period of this.periodsList){
+        //     period.removeHtmlInputs();
+
+        // }
+
+
+        //let masterPeriod = data['periods'][0];
+
+        //load periods
+        this.periodsList = [];
+        for (let period of data.periods){
+            //console.log(period)
+            this.addPeriod(period);
+
+        }
+
+        //remove events
+        for (let event of this.eventsList){
+            event.removeHtmlInputs();
+        }
+
+        //load events
+        this.eventsList = [];
+        for (let event of data.events){
+
+            timeline.addEvent(event);
+            
+        }
+
+
+        this.update2dMap();
+        this.update3d();
+
+    }
     
 
     write(){
@@ -331,13 +330,14 @@ class uTimeline {
 
         this.timelineOutputButton.addEventListener("click", () => {
             let str = this.write();
-            console.log(str);
+            console.log("Output:", str);
             this.timelineStringArea.value = str;
         });
 
         this.timelineReadButton.addEventListener("click", () => {
             let inputString = this.timelineStringArea.value;
-            this.timeline = loadTimeline(inputString);
+            //timeline = 
+            this.loadTimeline(inputString);
         })
 
         
@@ -454,6 +454,10 @@ class timelineEvent {
         this.timeline = params.timeline;
     }
 
+    removeHtmlInputs(){
+        this.inputBlock.innerHTML = "";
+    }
+
     makeHtmlInputs(){
         this.inputBlock = document.createElement("div");
         this.inputBlock.style.width = "95%";
@@ -513,6 +517,10 @@ class timelinePeriod {
     makeHtmlBar(){
 
     }
+    removeHtmlInputs(){
+        this.inputBlock.remove();
+    }
+
     makeHtmlInputs(){
         this.inputBlock = document.createElement("div");
         this.inputBlock.style.width = "95%";
@@ -736,9 +744,6 @@ class timeline3dModel{
         this.floor.setColor(0, 0, 200);
         this.u3dModel.add(this.floor);
         
-        console.log("floor", this.u3dModel)
-    
-
         this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
         this.leftWall.setColor(100,0,100);
         this.leftWall.translate(-1.75,1.5,0);
