@@ -1,0 +1,135 @@
+<html><head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <title>Timeline Maker</title> 
+    <script type="text/javascript" src="./x3dom.js"> </script> 
+    <link rel="stylesheet" type="text/css" href="./x3dom.css"> 
+    <!-- <link rel="stylesheet" type="text/css" href="./uTime3d.css">  -->
+    <script type="text/javascript" src="./uTime3d.js"> </script> 
+    <script type="text/javascript" src="./uTimeline.js"> </script> 
+
+    <style>
+        #x3Spot {
+            width: 500px;
+            height: 500px;
+        }
+        #workArea {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            left: 520px;
+        }
+
+        #area2d {
+            height: 150px;
+        }
+        #area3d {
+            /* height: 50px; */
+            width: 510px;
+            border: 1px solid red;
+        }
+
+        #inOutString {
+            height: 10em;
+            width: 75%;
+        }
+
+        #timelineinatorArea {
+            margin-bottom: 2em;
+            display: grid;
+            grid-template-columns: 49% 49%;
+        }
+
+        #notes {
+            margin-top: 5em;
+        }
+        
+    </style>   
+
+</head> 
+
+<body> 
+
+        <div id="area2d" style="position: relative; height: 200px; border: 1px solid green;"><div style="background-color: lightsalmon; border: 3px inset pink; position: absolute; height: 100px; width: 100%; top: 0px; left: 0px;"><div style="background-color: khaki; border: 1px solid black; border-radius: 2px; font-size: 12px; height: 20px; width: 800px; position: absolute; left: 20px; top: 20px;">Earth History</div></div><div style="background-color: lightgreen; border: 3px inset pink; position: absolute; height: 100px; width: 100%; top: 100px; left: 0px;"></div><div style="background-color: lightsalmon; border: 3px inset pink; position: absolute; height: 100px; width: 100%; top: 0px; left: 0px;"><div style="background-color: khaki; border: 1px solid black; border-radius: 2px; font-size: 12px; height: 20px; width: 800px; position: absolute; left: 20px; top: 20px;">Earth History</div></div><div style="background-color: lightgreen; border: 3px inset pink; position: absolute; height: 100px; width: 100%; top: 100px; left: 0px;"></div></div>
+
+        <div id="workArea"><div style="display: grid; grid-template-columns: 50% 50%; gap: 5px; border-bottom: 1px solid black; margin-bottom: 5px;"><div>Periods<input type="button" value="Add Period"><div><div style="width: 95%; background-color: lightsalmon; padding: 2px; border: 3px outset red; margin-top: 3px;"><input type="number" value="-4500000"><input type="number" value="0"><input type="text" value="Earth History"><input type="button" value="-"></div></div></div><div>Events<input type="button" value="Add Event"><div></div></div></div><div><input type="button" value="Write Timeline"><input type="button" value="Read Timeline"><div style="width: 100%;"><textarea style="width: 90%;"></textarea></div></div></div>
+
+        
+        <div id="area3d">
+            
+            <!-- Views -->
+            <!-- <input id="start_View" type="button" value="Start" class="view">
+            <input id="door_View" type="button" value="Door" class="view">
+            <input id="top_View" type="button" value="Top" class="view"> -->
+
+            <div id="viewpointButtons"><div>gen<input type="button" value="startView"><input type="button" value="PerpView"></div><div>panel</div></div><div id="x3Spot" style="border: 1px solid green;"><x3d width="100%" height="100%" l_openscad="true" style="width: 100%; height: 100%;"><scene def="scene" description="startPos" render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" pickmode="idBuf" dopickpass="true" shadowobjectidmapping=""><navigationinfo type="walk"></navigationinfo><transform translation="0 0 0" render="true" visible="true" bboxcenter="0 0 0" bboxmargin="0.01" bboxcolor="1,1,0" center="0,0,0" rotation="0,0,0,0" scale="1,1,1" scaleorientation="0,0,0,0"><shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"><appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"><material diffusecolor="0 0 0.7843137254901961" ambientintensity="0.2" emissivecolor="0 0 0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material></appearance><box solid="true" ccw="true" usegeocache="true" size="3.75 0.5 11" hashelpercolors="false"></box></shape></transform><transform translation="-1.75 1.5 0" render="true" visible="true" bboxcenter="0 0 0" bboxmargin="0.01" bboxcolor="1,1,0" center="0,0,0" rotation="0,0,0,0" scale="1,1,1" scaleorientation="0,0,0,0"><shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"><appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"><material diffusecolor="0.39215686274509803 0 0.39215686274509803" ambientintensity="0.2" emissivecolor="0 0 0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material></appearance><box solid="true" ccw="true" usegeocache="true" size="0.2 2.5 11" hashelpercolors="false"></box></shape></transform><viewpoint description="startView" position="1, 1.5, 12" orientation="0,1,0,0.2" centerofrotation="-1,1.5,0" fieldofview="0.78540" id="startView" znear="-1" zfar="-1"></viewpoint><viewpoint description="PerpView" position="12.5, 1.5, 0" orientation="0,1,0,1.57" centerofrotation="-2,1.5,0" fieldofview="0.78540" id="PerpView" znear="-1" zfar="-1"></viewpoint><directionallight direction="-1, -1, 0" global="true" intensity="0.5" color="1 1 1"></directionallight><transform translation="-1.685 1.5 0" render="true" visible="true" bboxcenter="0 0 0" bboxmargin="0.01" bboxcolor="1,1,0" center="0,0,0" rotation="0,0,0,0" scale="1,1,1" scaleorientation="0,0,0,0"><shape render="true" visible="true" bboxcenter="0,0,0" bboxsize="-1,-1,-1" bboxdisplay="false" bboxmargin="0.01" bboxcolor="1,1,0" ispickable="true" idoffset="0"><appearance sorttype="auto" sortkey="0" alphaclipthreshold="0.1"><material diffusecolor="0.7843137254901961 0.7843137254901961 0.7843137254901961" ambientintensity="0.2" emissivecolor="0 0 0" shininess="0.2" specularcolor="0,0,0" transparency="0"></material></appearance><box solid="true" ccw="true" usegeocache="true" size="0.1 0.6 10" hashelpercolors="false"></box></shape></transform></scene></x3d></div><div id="openScadArea"><input type="button" value="Export OpenSCAD"><input type="number" value="10"><div><textarea class="openScadOutput" style="width: 450px;"></textarea></div></div>
+        </div>
+
+
+    <!-- <div id="outputArea">
+        <input type="button" id="writeOut" value="Write Output">
+        <input type="button" id="loadButton" value="Load Timeline">
+        <br>
+        <textarea id="inOutString"></textarea>
+        <br>
+        
+    </div> -->
+    
+    <div id="notes">
+        Note:
+        <ul>
+            <li>First period is the master period, so if you change its start or end time it will rescale the whole thing.</li>
+        </ul>
+    </div>
+
+
+
+
+
+<script>
+
+    timeline = new uTimeline({
+        startTime: -4500000,
+        endTime: 0,
+        description: "Earth History",
+        controlElementId: "workArea",
+        draw2dElementId: "area2d",
+        draw3dElementId: "x3Spot"
+    });
+
+    // svg timeline:
+    // timeline.draw2d(
+    //     params = {
+    //         divId:"area2d",
+    //     }, 
+    //     svgParams = {
+            
+    //     }
+    // );
+    
+
+    
+
+
+// // Set up 3d element
+//     u3x = new ux3d("x3Spot", {
+//         width: "500px",
+//         height: "500px"
+//     });
+    
+//     makeHallTimeline(u3x);
+
+
+    // Add shapes here:
+
+    
+    
+</script>
+
+
+
+
+
+
+</body></html>

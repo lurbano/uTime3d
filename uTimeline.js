@@ -16,11 +16,14 @@ function loadTimeline(str){
         description: masterPeriod.description,
         controlElementId: data.params.controlElementId,
         draw2dElementId: data.params.draw2dElementId,
-        draw2dMap: data.params.draw2dMap
+        draw2dMap: data.params.draw2dMap,
+        draw3dElementId: data.params.draw3dElementId,
+        draw3dMap: data.params.draw3dMap
     });
 
     //load periods
     for (let period of data.periods){
+        //console.log(period)
         if (period.id !== "fullTime"){
             timeline.addPeriod(period);
             // let p = timeline.periodsList[timeline.periodsList.length -1];
@@ -250,7 +253,6 @@ class uTimeline {
 
 
     addControls(divId=""){
-        console.log("controls id:", divId)
         this.controlsElement = document.getElementById(divId);
         this.controlsElement.innerHTML = "";
         
@@ -682,60 +684,7 @@ class svgTimeline {
     }
 }
 
-// class divTimeline {
-//     constructor(divId="", params={}){
-//         let defaults = {
-//             width: 1000,
-//             height: 20, 
-//             fill: "lightblue",
-//             stroke: "red",
-//             "stroke-width": "2"
-//         }
-//         //this.params = {...defaults, ...params};
-//         this.parentElement = document.getElementById(divId);
-//         this.element = document.createElement('div');
 
-//         this.parentElement.appendChild(this.element);
-//     }
-// }
-
-
-// function makeHallTimeline(u3x){
-
-//     u3x.addLight({
-//         direction: "-1, -1, 0",
-//         intensity: 0.5
-//     })
-
-//     //cube
-//     floor = addBox(3.75,0.5,10.25);
-//     floor.setColor(0, 0, 200);
-//     u3x.add(floor);
-
-//     leftwell = addBox(0.25,2.5,10.25);
-//     leftwell.setColor(100,0,100);
-//     leftwell.translate(-1.75,1.5,0);
-//     u3x.add(leftwell);
-
-//     // rightwell = addBox(0.25,2.5,10.25);
-//     // rightwell.setColor(100,0,100);
-//     // rightwell.translate(1.75,1.5,0);
-//     // rightwell.setTransparency(0.6)
-//     // u3x.add(rightwell);
-
-//     // head-height downhall viewpoint
-//     let view0 = new uViewpoint({
-//         id:"startView",
-//         description: "doorView",
-//         orientation:"0,1,0,0.1",
-//         position:"1, 1.5, 10",
-//         fieldofview: "0.78540",
-//         centerofrotation: "0,1.5,0",
-//         znear:"-1",
-//         zfar:"-1"
-//     })
-//     u3x.add(view0);
-// }
 
 
 class timeline3dModel{
@@ -786,6 +735,9 @@ class timeline3dModel{
         this.floor = addBox(this.hallWidth,0.5,this.hallLength);
         this.floor.setColor(0, 0, 200);
         this.u3dModel.add(this.floor);
+        
+        console.log("floor", this.u3dModel)
+    
 
         this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
         this.leftWall.setColor(100,0,100);

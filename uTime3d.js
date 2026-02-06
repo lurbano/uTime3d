@@ -15,13 +15,17 @@ class ux3d {
         
         let defaults = {
             width: "400px",
-            height: "500px"
+            height: "500px",
+            l_openscad: true,
         }
+
+        console.log("hostDivId:", hostDivId)
 
         this.params = {...defaults, ...params};
 
         this.elem = document.createElement("x3d");
         setAttributes(this.elem, this.params);
+        console.log("x3d:", this.elem);
         this.elem.style.width = this.params.width;
         this.elem.style.height = this.params.height;
 
@@ -33,9 +37,11 @@ class ux3d {
         this.viewpoints = [];
         
         this.hostDiv = document.getElementById(hostDivId);
+        this.hostDiv.innerHTML = "";
         this.hostDiv.appendChild(this.elem);
 
-        this.addOpenscadControls();
+        if (this.params.l_openscad) this.addOpenscadControls();
+
         //this.addTimelineInOutControls();
 
         this.addViewpointButtonArea();
@@ -47,9 +53,19 @@ class ux3d {
     
 
     addViewpointButtonArea(){
-        this.viewpointButtonArea = document.createElement("div");
-        // this.viewpointButtonArea.innerHTML = "Views";
-        this.hostDiv.before(this.viewpointButtonArea);
+
+        this.viewpointButtonArea = document.getElementById("viewpointButtons");
+
+        if (this.viewpointButtonArea){
+            this.viewpointButtonArea.innerHTML = '';
+        } else {
+            this.viewpointButtonArea = document.createElement("div");
+            this.viewpointButtonArea.setAttribute('id', "viewpointButtons");
+            this.hostDiv.before(this.viewpointButtonArea);
+        }
+        
+
+        
 
         this.vpAreas = {}
 
@@ -134,6 +150,16 @@ class ux3d {
 
 
     addOpenscadControls() {
+        this.scadDiv = document.getElementById("openScadArea");
+
+        if (this.scadDiv) {
+            this.scadDiv.innerHTML = "";
+        } else {
+            this.scadDiv = document.createElement("div");
+            this.scadDiv.setAttribute("id", "openScadArea");
+            this.hostDiv.after(this.scadDiv);
+        }
+
         //insert them after divid
         this.openscadButton = document.createElement('input');
         this.openscadButton.setAttribute('type', 'button')
@@ -143,19 +169,23 @@ class ux3d {
         this.openscadScale.setAttribute('type', 'number');
         this.openscadScale.setAttribute('value', 10);
 
-
-        this.openscadOutput = document.createElement("div");
+        this.scadCodeArea = document.createElement("div");
+        this.openscadOutput = document.createElement("textarea");
         this.openscadOutput.classList.add("openScadOutput");
+        this.openscadOutput.style.width = "450px";
+        this.scadCodeArea.appendChild(this.openscadOutput);
+
         //let div = this.elem;
-        this.hostDiv.after(this.openscadButton);
-        this.openscadButton.after(this.openscadScale);
-        this.openscadScale.after(this.openscadOutput);
+        this.scadDiv.appendChild(this.openscadButton);
+        this.scadDiv.appendChild(this.openscadScale);
+        this.scadDiv.appendChild(this.scadCodeArea);
 
         this.openscadButton.addEventListener("click", () => {
             let scale = this.openscadScale.value;
             let scadCode = this.toOpenSCAD(scale=scale);
             console.log("openscadOutput:", scale )
-            this.openscadOutput.innerText = scadCode;
+            //this.openscadOutput.innerText = scadCode;
+            this.openscadOutput.value = scadCode;
         })
         
 
