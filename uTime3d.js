@@ -475,19 +475,16 @@ class uPrimitive {
         this.appearance.div.appendChild(div);
     }
 
-    // addVideo(fname){
-    //     let div = document.createElement("MovieTexture");
-    //     div.setAttribute("url", fname);
-    //     this.appearance.div.appendChild(div);
-    // }
+
 
     addVideo(fname){
         this.video = new uMovieTexture({
-            USE: fname
-        })
+            url: fname,
+        });
 
-        this.appearance.appendChild(this.video);
+        this.appearance.div.appendChild(this.video.div);
     }
+
 
     isVisible(){
         return this.transform.isVisible();
