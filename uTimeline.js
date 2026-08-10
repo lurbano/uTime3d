@@ -118,7 +118,9 @@ class uTimeline {
                 startTime: period.startTime,
                 endTime: period.endTime,
                 description: period.description,
-                id: period.id
+                id: period.id,
+                link2d: period.link2d,
+                link3d: period.link3d,
             }
             output.periods.push(p);
         }
@@ -192,7 +194,12 @@ class uTimeline {
             
             // Add bar to period
             period.bar = pDiv;
-            period.bar.innerHTML = period.description;
+            //  create link
+            if (period.link2d !== "") {
+                period.bar.innerHTML = `<a href=${period.link2d}> ${period.description} </a>`;
+            } else {
+                period.bar.innerHTML = `${period.description} `;
+            }
             period.bar.style.position = "absolute";
             let x = this.xOffset_2d(period.startTime, this.params_2d.maxBarLength)
             period.bar.style.left = `${x}px`;
@@ -509,7 +516,9 @@ class timelinePeriod {
             endTime: 0, 
             description: "", 
             timeline: "", 
-            id: ""
+            id: "",
+            link2d: "",
+            link3d: ""
         }
 
         this.params = {...defaultParams, ...params};
@@ -519,6 +528,8 @@ class timelinePeriod {
         this.endTime = this.params.endTime;
         this.description = this.params.description;
         this.id = this.params.id;
+        this.link2d = this.params.link2d;
+        this.link3d = this.params.link3d;
 
         // for 3d panel
         this.panel = '';
@@ -570,6 +581,26 @@ class timelinePeriod {
         this.inputBlock.appendChild(this.descInput);
         this.descInput.addEventListener("change", (e) => {
             this.description = e.target.value;
+            this.timeline.update();
+        } )
+
+        this.link2dInput = document.createElement('input');
+        this.link2dInput.setAttribute("type", "text");
+        this.link2dInput.setAttribute("value", this.link2d);
+        this.link2dInput.setAttribute("title", "2d Link");
+        this.inputBlock.appendChild(this.link2dInput);
+        this.link2dInput.addEventListener("change", (e) => {
+            this.link2d = e.target.value;
+            this.timeline.update();
+        } )
+
+        this.link3dInput = document.createElement('input');
+        this.link3dInput.setAttribute("type", "text");
+        this.link3dInput.setAttribute("value", this.link3d);
+        this.link3dInput.setAttribute("title", "3d Link");
+        this.inputBlock.appendChild(this.link3dInput);
+        this.link3dInput.addEventListener("change", (e) => {
+            this.link3d = e.target.value;
             this.timeline.update();
         } )
 
