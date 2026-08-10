@@ -567,6 +567,15 @@ class timelinePeriod {
         this.delButton = document.createElement("input");
         this.delButton.setAttribute('type', "button");
         this.delButton.setAttribute('value', "-");
+        this.delButton.addEventListener('click', (e) => {
+            if (confirm("Confirm deletion of Period")){
+                console.log("Period deleted:", this.description);
+                this.timeline.periodsList = this.timeline.periodsList.filter(item => item !== this);
+            } else {
+                console.log("User canceled deletion.")
+            }
+            this.timeline.update();
+        })
         this.inputBlock.appendChild(this.delButton);
 
         return this.inputBlock;
