@@ -487,6 +487,15 @@ class timelineEvent {
         this.delButton = document.createElement("input");
         this.delButton.setAttribute('type', "button");
         this.delButton.setAttribute('value', "-");
+        this.delButton.addEventListener('click', (e) => {
+            if (confirm(`Confirm deletion of Event: ${this.description}`)){
+                console.log("Event deleted:", this.description);
+                this.timeline.eventsList = this.timeline.eventsList.filter(item => item !== this);
+            } else {
+                console.log("User canceled deletion.")
+            }
+            this.timeline.update();
+        })
         this.inputBlock.appendChild(this.delButton);
 
         return this.inputBlock;
@@ -568,7 +577,7 @@ class timelinePeriod {
         this.delButton.setAttribute('type', "button");
         this.delButton.setAttribute('value', "-");
         this.delButton.addEventListener('click', (e) => {
-            if (confirm("Confirm deletion of Period")){
+            if (confirm(`Confirm deletion of Event: this.description`)){
                 console.log("Period deleted:", this.description);
                 this.timeline.periodsList = this.timeline.periodsList.filter(item => item !== this);
             } else {
