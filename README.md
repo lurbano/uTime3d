@@ -2,3 +2,5 @@ uX3DOM.js: JS library for making easier to create VR timelines using X3DOM prima
 
 Install php for development server:
 > sudo apt install php-cli
+Run php server
+> php -S localhost:8000
