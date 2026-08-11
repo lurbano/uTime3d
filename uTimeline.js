@@ -575,6 +575,20 @@ class timelinePeriod {
             this.timeline.update();
         })
 
+        this.delButton = document.createElement("input");
+        this.delButton.setAttribute('type', "button");
+        this.delButton.setAttribute('value', "-");
+        this.delButton.addEventListener('click', (e) => {
+            if (confirm(`Confirm deletion of Event: this.description`)){
+                console.log("Period deleted:", this.description);
+                this.timeline.periodsList = this.timeline.periodsList.filter(item => item !== this);
+            } else {
+                console.log("User canceled deletion.")
+            }
+            this.timeline.update();
+        })
+        this.inputBlock.appendChild(this.delButton);
+
         this.descInput = document.createElement('input');
         this.descInput.setAttribute("type", "text");
         this.descInput.setAttribute("value", this.description);
@@ -604,19 +618,44 @@ class timelinePeriod {
             this.timeline.update();
         } )
 
-        this.delButton = document.createElement("input");
-        this.delButton.setAttribute('type', "button");
-        this.delButton.setAttribute('value', "-");
-        this.delButton.addEventListener('click', (e) => {
-            if (confirm(`Confirm deletion of Event: this.description`)){
-                console.log("Period deleted:", this.description);
-                this.timeline.periodsList = this.timeline.periodsList.filter(item => item !== this);
-            } else {
-                console.log("User canceled deletion.")
+        this.visualMediaInput = document.createElement('input');
+        this.visualMediaInput.setAttribute("type", "file");
+        this.inputBlock.appendChild(this.visualMediaInput);
+        this.visualMediaInputButton = document.createElement('input');
+        this.visualMediaInputButton.setAttribute("type", "button");
+        this.visualMediaInputButton.setAttribute("value", "Upload Image");
+        this.inputBlock.appendChild(this.visualMediaInputButton);
+
+        this.visualMediaInputButton.addEventListener("click",  async () => {
+            const fileInput = this.visualMediaInput;
+            if (fileInput.files.length === 0) {
+                alert('Please select a file first.');
+                return;
             }
-            this.timeline.update();
+            // Pack the file into FormData
+            const formData = new FormData();
+            formData.append('uploaded_file', fileInput.files[0]);
+            formData.append('username', username); //assuming global username
+
+            //console.log("formDate: ", formData)
+            try {
+                const response =  await fetch('/upload.php', {
+                method: 'POST',
+                body: formData // Fetch sets the multipart boundary header automatically
+                });
+
+                //console.log("Response", response);
+                
+                if (response.ok) {
+                    console.log(response);
+                    alert('Upload successful!');
+                }
+            } catch (error) {
+                console.error('Upload failed:', error);
+            }
         })
-        this.inputBlock.appendChild(this.delButton);
+        
+
 
         return this.inputBlock;
     }
