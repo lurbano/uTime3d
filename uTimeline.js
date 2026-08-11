@@ -618,6 +618,8 @@ class timelinePeriod {
             this.timeline.update();
         } )
 
+        this.visualMediaLink = "";
+
         this.visualMediaInput = document.createElement('input');
         this.visualMediaInput.setAttribute("type", "file");
         this.inputBlock.appendChild(this.visualMediaInput);
@@ -625,6 +627,7 @@ class timelinePeriod {
         this.visualMediaInputButton.setAttribute("type", "button");
         this.visualMediaInputButton.setAttribute("value", "Upload Image");
         this.inputBlock.appendChild(this.visualMediaInputButton);
+
 
         this.visualMediaInputButton.addEventListener("click",  async () => {
             const fileInput = this.visualMediaInput;
@@ -640,8 +643,8 @@ class timelinePeriod {
             //console.log("formDate: ", formData)
             try {
                 const response =  await fetch('/upload.php', {
-                method: 'POST',
-                body: formData // Fetch sets the multipart boundary header automatically
+                    method: 'POST',
+                    body: formData // Fetch sets the multipart boundary header automatically
                 });
 
                 //console.log("Response", response);
@@ -654,6 +657,51 @@ class timelinePeriod {
                 console.error('Upload failed:', error);
             }
         })
+
+
+        this.setVisualMediaButton = document.createElement("input");
+        this.setVisualMediaButton.setAttribute("type", "button");
+        this.setVisualMediaButton.setAttribute("value", "Choose Image");
+        this.inputBlock.appendChild(this.setVisualMediaButton);
+        this.setVisualMediaButton.addEventListener("click", () => {
+            const formData = new FormData();
+            formData.append('username', username); //assuming global username
+            try {
+                fetch('/getFilesList.php', {
+                    method: 'POST',
+                    body: formData // Fetch sets the multipart boundary header automatically
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response error");
+                    }
+                    console.log("Response:", response)
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Response from php:", data.files);
+                    
+                    data.files.forEach(filename => {
+                        const option = document.createElement("option");
+                        option.value = filename,
+                        option.textContent = filename,
+                        console.log(option);
+                        this.visualMediaDropdown.appendChild(option);
+                        this.visualMediaDropdown.addEventListener("change", (e) => {
+                            this.visualMediaLink = e.target.value;
+                            this.timeline.update();
+                            
+                        })
+                    })
+                })
+
+            } catch (error) {
+                console.error('Upload failed:', error);
+            }
+        })
+
+        this.visualMediaDropdown = document.createElement("select");
+        this.inputBlock.appendChild(this.visualMediaDropdown);
         
 
 
