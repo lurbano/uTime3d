@@ -205,6 +205,9 @@ class uTimeline {
             period.bar.style.left = `${x}px`;
             let y =  this.params_2d.yOffset + np * (this.params_2d.barHeight+this.params_2d.barGap);
             period.bar.style.top = `${y}px`;
+            //set background image
+            console.log("Period:", period);
+            period.bar.style.backgroundImage = `url(${period.visualMediaLink})`;
             this.map2dPeriodElement.appendChild(period.bar);
         }
 
@@ -688,7 +691,8 @@ class timelinePeriod {
                         console.log(option);
                         this.visualMediaDropdown.appendChild(option);
                         this.visualMediaDropdown.addEventListener("change", (e) => {
-                            this.visualMediaLink = e.target.value;
+                            this.visualMediaLink = `./uploads/${username}/${e.target.value}`;
+                            console.log("Link:", this, this.visualMediaLink);
                             this.timeline.update();
                             
                         })
