@@ -702,14 +702,20 @@ class timelinePeriod {
                         option.textContent = filename,
                         console.log(option);
                         this.visualMediaDropdown.appendChild(option);
-                        this.visualMediaDropdown.addEventListener("change", (e) => {
-                            this.visualMediaLink = `./uploads/${username}/${e.target.value}`;
-                            console.log("Link:", this, this.visualMediaLink);
-                            this.visualMediaDropdown.remove();
-                            this.timeline.update();
-                            
-                        })
+                        
                     })
+
+                })
+
+                this.visualMediaDropdown.addEventListener("click", (e) => {
+                    if (e.target.value === "-"){
+                        this.visualMediaLink = `-`;
+                    }
+                    else {
+                        this.visualMediaLink = `./uploads/${username}/${e.target.value}`;
+                    }
+                    this.visualMediaDropdown.remove();
+                    this.timeline.update();
                 })
 
             } catch (error) {
