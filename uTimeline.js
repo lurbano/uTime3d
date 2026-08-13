@@ -621,10 +621,11 @@ class timelinePeriod {
             this.timeline.update();
         } )
 
-        this.visualMediaLink = "";
+        //this.visualMediaLink = "";
 
         this.visualMediaInput = document.createElement('input');
         this.visualMediaInput.setAttribute("type", "file");
+        //this.visualMediaInput.setAttribute("id", "uploaded_file")
         this.inputBlock.appendChild(this.visualMediaInput);
         this.visualMediaInputButton = document.createElement('input');
         this.visualMediaInputButton.setAttribute("type", "button");
@@ -661,12 +662,17 @@ class timelinePeriod {
             }
         })
 
+        
 
         this.setVisualMediaButton = document.createElement("input");
         this.setVisualMediaButton.setAttribute("type", "button");
         this.setVisualMediaButton.setAttribute("value", "Choose Image");
         this.inputBlock.appendChild(this.setVisualMediaButton);
         this.setVisualMediaButton.addEventListener("click", () => {
+            
+            this.visualMediaDropdown = document.createElement("select");
+            this.inputBlock.appendChild(this.visualMediaDropdown);
+
             const formData = new FormData();
             formData.append('username', username); //assuming global username
             try {
@@ -683,6 +689,12 @@ class timelinePeriod {
                 })
                 .then(data => {
                     console.log("Response from php:", data.files);
+
+                    //empty default option
+                    const option = document.createElement("option");
+                    option.value = "-",
+                    option.textContent = "-",
+                    this.visualMediaDropdown.appendChild(option);
                     
                     data.files.forEach(filename => {
                         const option = document.createElement("option");
@@ -693,6 +705,7 @@ class timelinePeriod {
                         this.visualMediaDropdown.addEventListener("change", (e) => {
                             this.visualMediaLink = `./uploads/${username}/${e.target.value}`;
                             console.log("Link:", this, this.visualMediaLink);
+                            this.visualMediaDropdown.remove();
                             this.timeline.update();
                             
                         })
@@ -704,8 +717,7 @@ class timelinePeriod {
             }
         })
 
-        this.visualMediaDropdown = document.createElement("select");
-        this.inputBlock.appendChild(this.visualMediaDropdown);
+        
         
 
 

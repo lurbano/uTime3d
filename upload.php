@@ -23,7 +23,7 @@
     
     // Extract base filename and complete target path
     $fileName = basename($_FILES["uploaded_file"]["name"]);
-    $targetFilePath = $targetDir . $fileName;
+    $targetFilePath = $targetDir ; //. $fileName;
     if (!is_dir($targetFilePath)) {
         mkdir($targetFilePath, 0755, true);
     }
@@ -38,7 +38,7 @@
     }
 
     // Move the file from temporary storage to the target folder
-    if (move_uploaded_file($_FILES["myFile"]["tmp_name"], $targetFilePath)) {
+    if (move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $targetFilePath . $fileName)) {
         echo "The file " . htmlspecialchars($fileName) . " has been successfully uploaded.";
     } else {
         echo "Sorry, there was an error uploading your file.";
