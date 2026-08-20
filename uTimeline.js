@@ -981,8 +981,19 @@ class timeline3dModel{
         let panel = addBox(this.panelWidth, this.panelHeight, panelLength);
         panel.setColor(200,200,200);
         panel.translate(x,y, z);
-        this.u3dModel.add(panel);
 
+        //add image
+        if (period.visualMediaLink){
+            panel.addTexture(period.visualMediaLink);
+        }
+
+        
+        this.u3dModel.add(panel);
+        //add link
+        if (period.link2d){
+            console.log("Adding 3d link:", period.link2d)
+            panel.addLink(period.link2d);
+        }
         period.panel = panel;
     }
 
