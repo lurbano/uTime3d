@@ -127,7 +127,8 @@ class uTimeline {
         for (let event of this.eventsList){
             let e = {
                 eventTime: event.eventTime,
-                description: event.description
+                description: event.description,
+                link2d: event.link2d,
             }
             output.events.push(e);
         }
@@ -231,7 +232,15 @@ class uTimeline {
             //label
             let label = document.createElement('div')
             eDiv.appendChild(label)
-            label.innerHTML = event.description;
+            //label.innerHTML = event.description;
+
+            //  create link
+            if (event.link2d !== "") {
+                label.innerHTML = `<a href=${event.link2d}> ${event.description} </a>`;
+            } else {
+                label.innerHTML = event.description;
+            }
+
             label.style.writingMode = 'vertical-rl'
             //label.style.textOrientation = 'upright'
             //label.style.transform = 'rotate(90deg)'
@@ -455,6 +464,7 @@ class timelineEvent {
         let defaultParams = {
             eventTime: 0,
             description: "",
+            link2d: "",
             timeline: undefined
         }
         params = {...defaultParams, ...params};
@@ -462,6 +472,7 @@ class timelineEvent {
         this.eventTime = params.eventTime;
         this.description = params.description;
         this.timeline = params.timeline;
+        this.link2d = params.link2d;
     }
 
     removeHtmlInputs(){
@@ -491,6 +502,18 @@ class timelineEvent {
         this.inputBlock.appendChild(this.descInput);
         this.descInput.addEventListener("change", (e) => {
             this.description = e.target.value;
+            this.timeline.update();
+        } )
+
+        this.link2dInput = document.createElement('input');
+        this.link2dInput.setAttribute("type", "text");
+        if (this.link2d !== ""){
+            this.link2dInput.setAttribute("value", this.link2d);
+        }
+        this.link2dInput.setAttribute("title", "2d Link");
+        this.inputBlock.appendChild(this.link2dInput);
+        this.link2dInput.addEventListener("change", (e) => {
+            this.link2d = e.target.value;
             this.timeline.update();
         } )
 
@@ -986,14 +1009,15 @@ class timeline3dModel{
         if (period.visualMediaLink){
             panel.addTexture(period.visualMediaLink);
         }
-
         
-        this.u3dModel.add(panel);
         //add link
         if (period.link2d){
             console.log("Adding 3d link:", period.link2d)
             panel.addLink(period.link2d);
         }
+        
+        this.u3dModel.add(panel);
+        
         period.panel = panel;
     }
 

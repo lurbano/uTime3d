@@ -515,10 +515,11 @@ class uPrimitive {
     }
 
     addLink(url){
+        console.log("addLink", this.div)
         //create link element
         this.div.addEventListener("click", () =>{
             console.log("clicked");
-            window.location.href = url;
+            window.location.href = 'https://soriki.com'; //url;
         })
         // this.link = document.createElement('a');
         //this.link.setAttribute("href", `"${url}"`);
