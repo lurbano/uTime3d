@@ -343,9 +343,19 @@ class uTimeline {
         this.timelineReadButton.setAttribute("type", "button");
         this.timelineReadButton.setAttribute("value", "Read Timeline");
 
+        this.timelineSaveButton = document.createElement("input");
+        this.timelineSaveButton.setAttribute("type", "button");
+        this.timelineSaveButton.setAttribute("value", "Save Timeline");
+
+        this.timelineName = document.createElement("input");
+        this.timelineName.setAttribute("type", "text");
+        this.timelineName.setAttribute("placeholder", "filename");
+
         this.timelineArea.appendChild(this.timelineOutputButton);
         this.timelineArea.appendChild(this.timelineReadButton);
         this.timelineArea.appendChild(outputBlock);
+        this.timelineArea.appendChild(this.timelineName);
+        this.timelineArea.appendChild(this.timelineSaveButton);
 
         this.timelineOutputButton.addEventListener("click", () => {
             let str = this.write();
@@ -357,6 +367,36 @@ class uTimeline {
             let inputString = this.timelineStringArea.value;
             //timeline = 
             this.loadTimeline(inputString);
+        })
+
+        this.timelineSaveButton.addEventListener("click", async () => {
+            
+            let str = this.write();
+            console.log("Output:", str);
+
+            //this.saveTimeline(fname);
+            const formData = new FormData();
+            formData.append('action', 'save');
+            formData.append('filename', this.timelineName.value);
+            formData.append('data', str);
+            formData.append('username', username); //assuming global username
+
+            //console.log("formDate: ", formData)
+            try {
+                const response =  await fetch('/saveTimeline.php', {
+                    method: 'POST',
+                    body: formData // Fetch sets the multipart boundary header automatically
+                });
+
+                //console.log("Response", response);
+                
+                if (response.ok) {
+                    console.log(response);
+                    alert('Save successful!');
+                }
+            } catch (error) {
+                console.error('Save failed:', error);
+            }
         })
 
         
