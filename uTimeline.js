@@ -351,11 +351,16 @@ class uTimeline {
         this.timelineName.setAttribute("type", "text");
         this.timelineName.setAttribute("placeholder", "filename");
 
+        this.timelineLoadFromServerButton = document.createElement("input");
+        this.timelineLoadFromServerButton.setAttribute("type", "button");
+        this.timelineLoadFromServerButton.setAttribute("value", "Load Timeline from Server");
+
         this.timelineArea.appendChild(this.timelineOutputButton);
         this.timelineArea.appendChild(this.timelineReadButton);
         this.timelineArea.appendChild(outputBlock);
         this.timelineArea.appendChild(this.timelineName);
         this.timelineArea.appendChild(this.timelineSaveButton);
+        this.timelineArea.appendChild(this.timelineLoadFromServerButton);
 
         this.timelineOutputButton.addEventListener("click", () => {
             let str = this.write();
@@ -398,6 +403,47 @@ class uTimeline {
                 console.error('Save failed:', error);
             }
         })
+
+        this.timelineLoadFromServerButton.addEventListener("click", async () => {
+            
+
+            //this.saveTimeline(fname);
+            const formData = new FormData();
+            formData.append('action', 'load');
+            formData.append('filename', this.timelineName.value);
+            formData.append('username', username); //assuming global username
+
+            //console.log("formDate: ", formData)
+            try {
+                const response =  await fetch('/getTimeline.php', {
+                    method: 'POST',
+                    body: formData // Fetch sets the multipart boundary header automatically
+                });
+
+                //console.log("Response", response);
+                
+                if (response.ok) {
+                    console.log("Response:", response);
+                    alert('Load from server successful!');
+                }
+
+                const data = await response.json();
+
+                //console.log(JSON.parse(data));
+
+                //data = JSON.parse(response[1]);
+                console.log("Response JSON:", data['result'])
+
+                this.loadTimeline(data['result']);
+
+                // const phpString = data.result;
+                // console.log("Processed string:", phpString);
+
+            } catch (error) {
+                console.error('Save failed:', error);
+            }
+        })
+
 
         
 
