@@ -81,7 +81,7 @@ class uTimeline {
         //load periods
         this.periodsList = [];
         for (let period of data.periods){
-            //console.log(period)
+            console.log("Add period:", period)
             this.addPeriod(period);
 
         }
@@ -121,6 +121,7 @@ class uTimeline {
                 id: period.id,
                 link2d: period.link2d,
                 link3d: period.link3d,
+                visualMediaLink: period.visualMediaLink,
             }
             output.periods.push(p);
         }
@@ -184,6 +185,7 @@ class uTimeline {
         let np = -1;
         for (let period of this.periodsList) {
             np++;
+            console.log(`Period ${np}:`, period.visualMediaLink);
             let pDiv = document.createElement('div');
             pDiv.style.backgroundColor = "khaki";
             pDiv.style.border = '1px solid black';
@@ -469,7 +471,8 @@ class uTimeline {
             endTime: this.endTime, 
             description:"", 
             timeline: this,
-            id: ""
+            id: "",
+            visualMediaLink: "",
         }
         params = {...defaultParams, ...params};
         
@@ -631,7 +634,8 @@ class timelinePeriod {
             timeline: "", 
             id: "",
             link2d: "",
-            link3d: ""
+            link3d: "",
+            visualMediaLink: "",
         }
 
         this.params = {...defaultParams, ...params};
@@ -643,6 +647,7 @@ class timelinePeriod {
         this.id = this.params.id;
         this.link2d = this.params.link2d;
         this.link3d = this.params.link3d;
+        this.visualMediaLink = this.params.visualMediaLink;
 
         // for 3d panel
         this.panel = '';
