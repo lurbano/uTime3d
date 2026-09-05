@@ -406,47 +406,48 @@ class uTimeline {
 
         this.timelineLoadFromServerButton.addEventListener("click", async () => {
             
-
-            //this.saveTimeline(fname);
-            const formData = new FormData();
-            formData.append('action', 'load');
-            formData.append('filename', this.timelineName.value);
-            formData.append('username', username); //assuming global username
-
-            //console.log("formDate: ", formData)
-            try {
-                const response =  await fetch('/getTimeline.php', {
-                    method: 'POST',
-                    body: formData // Fetch sets the multipart boundary header automatically
-                });
-
-                //console.log("Response", response);
-                
-                if (response.ok) {
-                    console.log("Response:", response);
-                    alert('Load from server successful!');
+            await this.getTimelineFromServer(
+                {
+                    username:username, //assuming global username
+                    timelineName: this.timelineName.value
                 }
-
-                const data = await response.json();
-
-                //console.log(JSON.parse(data));
-
-                //data = JSON.parse(response[1]);
-                console.log("Response JSON:", data['result'])
-
-                this.loadTimeline(data['result']);
-
-                // const phpString = data.result;
-                // console.log("Processed string:", phpString);
-
-            } catch (error) {
-                console.error('Save failed:', error);
-            }
+            );
         })
+           
+
+    }
+
+    async getTimelineFromServer({username=username, timelineName=""}){
+        const formData = new FormData();
+        formData.append('action', 'load');
+        formData.append('filename', timelineName);
+        formData.append('username', username); 
+
+        //console.log("formDate: ", formData)
+        try {
+            const response =  await fetch('/getTimeline.php', {
+                method: 'POST',
+                body: formData // Fetch sets the multipart boundary header automatically
+            });
+
+            //console.log("Response", response);
+            
+            if (response.ok) {
+                console.log("Response:", response);
+                alert('Load from server successful!');
+            }
+
+            const data = await response.json();
+
+            console.log("Response JSON:", data['result'])
+
+            this.loadTimeline(data['result']);
 
 
-        
 
+        } catch (error) {
+            console.error('Save failed:', error);
+        }
     }
 
     updateControls(){

@@ -93,7 +93,9 @@
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const username = urlParams.get('username'); 
+    const timelineUrlName = urlParams.get("timelineName");
     console.log("Username:", username);
+    console.log("Timeline Name", timelineUrlName);
 
     timeline = new uTimeline({
         startTime: -4500000,
@@ -103,6 +105,13 @@
         draw2dElementId: "area2d",
         draw3dElementId: "x3Spot"
     });
+
+    if ((username) && (timelineUrlName)){
+        timeline.getTimelineFromServer({
+            username: username,
+            timelineName: timelineUrlName
+        })
+    }
 
     // svg timeline:
     // timeline.draw2d(
