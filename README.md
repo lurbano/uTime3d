@@ -6,3 +6,9 @@ Run php server
 > php -S localhost:8000
 
 
+# LED Timeline
+
+Using 
+* Pico W (pin 27)
+* Circiutpython
+* MakerspaceNetwork (uNetComm)
