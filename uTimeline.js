@@ -183,6 +183,12 @@ class uTimeline {
     update2dMap(){
         this.map2dPeriodElement.innerHTML = "";
         let np = -1;
+
+        // update base timeline parameters from first period
+        this.startTime = this.periodsList[0].startTime;
+        this.endTime = this.periodsList[0].endTime;
+        this.totalTimePeriod = this.endTime - this.startTime;
+
         for (let period of this.periodsList) {
             np++;
             console.log(`Period ${np}:`, period.visualMediaLink);
