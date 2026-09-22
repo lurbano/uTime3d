@@ -159,7 +159,7 @@ class uTimeline {
         this.map2dPeriodElement.style.backgroundColor = 'LemonChiffon'
         this.map2dPeriodElement.style.border = "3px inset pink"
         this.map2dPeriodElement.style.position = 'absolute';
-        this.map2dPeriodElement.style.height = '150px';
+        this.map2dPeriodElement.style.height = '200px';
         this.map2dPeriodElement.style.width = "100%"
         this.map2dPeriodElement.style.top = '0';
         this.map2dPeriodElement.style.left = '0';
@@ -173,7 +173,7 @@ class uTimeline {
         this.map2dEventElement.style.position = 'absolute';
         this.map2dEventElement.style.height = '200px';
         this.map2dEventElement.style.width = "100%"
-        this.map2dEventElement.style.top = '100px';
+        this.map2dEventElement.style.top = '200px';
         this.map2dEventElement.style.left = '0';
         
         this.map2dElement.appendChild(this.map2dEventElement);
