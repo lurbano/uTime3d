@@ -155,10 +155,11 @@ class uTimeline {
         this.map2dElement.style.border = '1px solid green'
 
         this.map2dPeriodElement = document.createElement('div');
-        this.map2dPeriodElement.style.backgroundColor = 'lightSalmon'
+        this.map2dPeriodElement.id = "PeriodsMapElement";
+        this.map2dPeriodElement.style.backgroundColor = 'LemonChiffon'
         this.map2dPeriodElement.style.border = "3px inset pink"
         this.map2dPeriodElement.style.position = 'absolute';
-        this.map2dPeriodElement.style.height = '100px';
+        this.map2dPeriodElement.style.height = '150px';
         this.map2dPeriodElement.style.width = "100%"
         this.map2dPeriodElement.style.top = '0';
         this.map2dPeriodElement.style.left = '0';
@@ -166,10 +167,11 @@ class uTimeline {
         this.map2dElement.appendChild(this.map2dPeriodElement);
 
         this.map2dEventElement = document.createElement('div');
+        this.map2dEventElement.id = "EventsMapElement";
         this.map2dEventElement.style.backgroundColor = 'lightgreen'
         this.map2dEventElement.style.border = "3px inset pink"
         this.map2dEventElement.style.position = 'absolute';
-        this.map2dEventElement.style.height = '100px';
+        this.map2dEventElement.style.height = '200px';
         this.map2dEventElement.style.width = "100%"
         this.map2dEventElement.style.top = '100px';
         this.map2dEventElement.style.left = '0';
@@ -280,9 +282,11 @@ class uTimeline {
 
     addControls(divId=""){
         this.controlsElement = document.getElementById(divId);
+        //this.controlsElement.id = "controlsElement";
         this.controlsElement.innerHTML = "";
         
         this.epControlsElement = document.createElement("div");
+        this.epControlsElement.id = "epControlsElement";
         this.controlsElement.appendChild(this.epControlsElement)
 
         this.epControlsElement.style.display = "grid";
@@ -293,6 +297,7 @@ class uTimeline {
 
         // events panel
         this.eventsListArea = document.createElement("div");
+        this.eventsListArea.id = "eventsListArea";
         this.eventsListArea.innerHTML = "Events"
         this.addEventButton = document.createElement("input");
         this.addEventButton.setAttribute("type", "button");
@@ -305,6 +310,7 @@ class uTimeline {
         });
 
         this.eventsControlArea = document.createElement("div")
+        this.eventsControlArea.id = "eventsControlArea";
         this.eventsControlArea.innerHTML = "Events"
         this.eventsControlArea.appendChild(this.addEventButton);
         this.eventsControlArea.appendChild(this.eventsListArea);
@@ -318,6 +324,7 @@ class uTimeline {
 
         // periodsControlArea: div for period controls
         this.periodsControlArea = document.createElement("div")
+        this.periodsControlArea.id = "periodsControlArea";
         this.periodsControlArea.innerHTML = "Periods"
         this.periodsControlArea.appendChild(this.addPeriodButton);
         this.periodsControlArea.appendChild(this.periodsListArea);
@@ -333,6 +340,7 @@ class uTimeline {
 
     addTimelineInOutControls(){
         this.timelineArea = document.createElement('div');
+        this.timelineArea.id = "TimelineArea";
         this.epControlsElement.after(this.timelineArea);
 
         let outputBlock = document.createElement("div")
@@ -668,7 +676,7 @@ class timelinePeriod {
     makeHtmlInputs(){
         this.inputBlock = document.createElement("div");
         this.inputBlock.style.width = "95%";
-        this.inputBlock.style.backgroundColor = "lightSalmon";
+        this.inputBlock.style.backgroundColor = "Thistle";
         this.inputBlock.style.padding = "2px";
         this.inputBlock.style.border = "3px outset red"
         this.inputBlock.style.marginTop = "3px"
@@ -678,7 +686,10 @@ class timelinePeriod {
         this.startInput.setAttribute("value", this.startTime);
         this.inputBlock.appendChild(this.startInput);
         this.startInput.addEventListener('change', (e) => {
-            this.startTime = parseFloat(e.target.value);
+            
+            //this.startTime = parseFloat(e.target.value);
+            this.startTime = parseInputYear(e.target.value);
+            console.log("New startTime:", this.startTime)
             
             if (this.id === "fullTime") {
                 this.timeline.update({
@@ -1143,3 +1154,14 @@ class timeline3dModel{
 //         this.box = addBox(this.params.panelWidth, this.params.panelHeight, this.params.panelLength);
 //     }
 // }
+
+function parseInputYear(str){
+    return parseFloat(str);
+
+//   const match = str.trim().match(/^(-?\d+(?:\.\d+)?)\s*(AD|BC)?$/i);
+//   if (!match) throw new Error(`Invalid year: ${str}`);
+
+//   const year = Math.abs(parseFloat(match[1]));
+//   return match[2]?.toUpperCase() === "BC" ? -year : year;
+
+}
