@@ -146,20 +146,30 @@ class uTimeline {
             barHeight: 20,
             barGap: 5,
             eventTagWidth: 20,
+            area2dHeight: "400px",
+            periodsElementHeight: "200px"
         }
         this.params_2d = {...defaults, ...params};
 
+        
+
         this.map2dElement = document.getElementById(this.params_2d.divId);
         this.map2dElement.style.position = 'relative';
-        this.map2dElement.style.height = "200px";
+        this.map2dElement.style.height = this.params_2d["area2dHeight"];
         this.map2dElement.style.border = '1px solid green'
+
+        // timeline Grid
+        this.gridDiv = document.createElement("div");
+        this.map2dElement.prepend(this.gridDiv);
+        this.addGridlines2d();
+
 
         this.map2dPeriodElement = document.createElement('div');
         this.map2dPeriodElement.id = "PeriodsMapElement";
-        this.map2dPeriodElement.style.backgroundColor = 'LemonChiffon'
+        this.map2dPeriodElement.style.backgroundColor = 'transparent'
         this.map2dPeriodElement.style.border = "3px inset pink"
         this.map2dPeriodElement.style.position = 'absolute';
-        this.map2dPeriodElement.style.height = '200px';
+        this.map2dPeriodElement.style.height = this.params_2d["periodsElementHeight"];
         this.map2dPeriodElement.style.width = "100%"
         this.map2dPeriodElement.style.top = '0';
         this.map2dPeriodElement.style.left = '0';
@@ -168,12 +178,12 @@ class uTimeline {
 
         this.map2dEventElement = document.createElement('div');
         this.map2dEventElement.id = "EventsMapElement";
-        this.map2dEventElement.style.backgroundColor = 'lightgreen'
+        this.map2dEventElement.style.backgroundColor = '#00883380'
         this.map2dEventElement.style.border = "3px inset pink"
         this.map2dEventElement.style.position = 'absolute';
         this.map2dEventElement.style.height = '200px';
         this.map2dEventElement.style.width = "100%"
-        this.map2dEventElement.style.top = '200px';
+        this.map2dEventElement.style.top = this.params_2d["periodsElementHeight"];
         this.map2dEventElement.style.left = '0';
         
         this.map2dElement.appendChild(this.map2dEventElement);
@@ -183,6 +193,9 @@ class uTimeline {
     }
 
     update2dMap(){
+
+        this.addGridlines2d();
+
         this.map2dPeriodElement.innerHTML = "";
         let np = -1;
 
@@ -193,7 +206,7 @@ class uTimeline {
 
         for (let period of this.periodsList) {
             np++;
-            console.log(`Period ${np}:`, period.visualMediaLink);
+            // console.log(`Period ${np}:`, period.visualMediaLink);
             let pDiv = document.createElement('div');
             pDiv.style.backgroundColor = "khaki";
             pDiv.style.border = '1px solid black';
@@ -217,7 +230,7 @@ class uTimeline {
             let y =  this.params_2d.yOffset + np * (this.params_2d.barHeight+this.params_2d.barGap);
             period.bar.style.top = `${y}px`;
             //set background image
-            console.log("Period:", period);
+            // console.log("Period:", period);
             period.bar.style.backgroundImage = `url(${period.visualMediaLink})`;
             this.map2dPeriodElement.appendChild(period.bar);
         }
@@ -263,6 +276,57 @@ class uTimeline {
             event.tag = eDiv;
             this.map2dEventElement.appendChild(event.tag);
         }
+    }
+
+    addGridlines2d(gridParams = {}){
+        let defaults = {
+            dt: 500,
+        }
+        this.gridParams = {...defaults, ...gridParams};
+
+        // this.gridDiv = document.createElement("div");
+        this.gridDiv.id = "gridDiv";
+        this.gridDiv.innerHTML = "";
+        this.gridDiv.style.position = "absolute";
+        this.gridDiv.style.top = 0;
+        this.gridDiv.style.left = 0;
+        this.gridDiv.style.width = "100%",
+        this.gridDiv.style.height = "100%";
+        
+
+        for (let t = this.startTime; t < this.endTime; t+=this.gridParams["dt"]){
+            //console.log("t:",t);
+            if (t != 0) {
+                let line = document.createElement("div");
+                line.style.position = "absolute";
+                line.style.display = "inline-block";
+                line.style.height = "100%";
+                line.style.left = this.xOffset_2d(t, this.params_2d.maxBarLength); 
+                line.style.width = 0;
+                line.style.borderLeft = "1px solid lightblue";
+                line.innerHTML = t;
+                line.style.fontSize = "small";
+                this.gridDiv.append(line);
+            }
+        }
+
+
+        // zero line 
+        this.gridZero = document.createElement("div");
+        this.gridZero.style.position = "absolute";
+        this.gridZero.style.display = "inline-block";
+        this.gridZero.style.height = "100%";
+        this.gridZero.style.left = this.xOffset_2d(0, this.params_2d.maxBarLength); 
+        this.gridZero.style.width = 0;
+        this.gridZero.style.borderLeft = "1px solid red";
+        this.gridZero.innerHTML = "0";
+        // this.gridZero.classList.add("verticalLine");
+
+        this.gridDiv.append(this.gridZero);
+
+
+        
+
     }
 
     
