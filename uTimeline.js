@@ -235,11 +235,13 @@ class uTimeline {
             this.map2dPeriodElement.appendChild(period.bar);
         }
 
-        // events
+        // Add events to timeline
         let w = this.params_2d.eventTagWidth;
         this.map2dEventElement.innerHTML = '';
+        this.ledDivs = [];
         for (let event of this.eventsList) {
             
+            // label
             let eDiv = document.createElement('div');
             eDiv.style.width = `${w}px`;
             eDiv.style.height = `${w}px`;
@@ -250,7 +252,7 @@ class uTimeline {
             let x = this.xOffset_2d(event.eventTime, this.params_2d.maxBarLength) - w/2;
 
             eDiv.style.left = `${x}px`;
-            eDiv.style.top = '5px';
+            eDiv.style.top = '15px';
 
             //label
             let label = document.createElement('div')
@@ -275,6 +277,48 @@ class uTimeline {
 
             event.tag = eDiv;
             this.map2dEventElement.appendChild(event.tag);
+
+
+            // led tab
+            let ledDiv = document.createElement('div');
+            this.ledDivs.push(ledDiv);
+            ledDiv.style.width = `${w}px`;
+            ledDiv.style.height = `10px`;
+            ledDiv.style.border = '1px solid red';
+            //eDiv.style.borderBottom = 'none';
+            ledDiv.style.borderRadius = '2px';
+            ledDiv.style.position = 'absolute';
+            ledDiv.style.backgroundColor = "goldenrod";
+            
+            ledDiv.style.left = `${x}px`;
+            ledDiv.style.top = '3 px';
+
+            ledDiv.addEventListener("click", async (e) => {
+                
+                //eventLED(event.eventTime);
+                this.ledDivs.forEach(tag => {
+                    tag.style.backgroundColor = "lightblue";
+                })
+                e.currentTarget.style.backgroundColor = "green";
+
+                const url = `http://10.1.0.151/submit?date=${event.eventTime}`;
+                console.log("url:", url);
+                fetch(url);
+                // try {
+                //     const response = await fetch(url);
+                //     if (!response.ok) {
+                //     throw new Error(`Response status: ${response.status}`);
+                //     }
+
+                //     const result = await response.json();
+                //     console.log(result);
+                // } catch (error) {
+                //     console.error(error.message);
+                // }
+            })
+
+
+            this.map2dEventElement.appendChild(ledDiv);
         }
     }
 
@@ -1229,3 +1273,19 @@ function parseInputYear(str){
 //   return match[2]?.toUpperCase() === "BC" ? -year : year;
 
 }
+
+
+// async function eventLED(year) {
+//   const url = `http://10.0.1.151/submit?date=${year}`;
+//   try {
+//     const response = await fetch(url);
+//     if (!response.ok) {
+//       throw new Error(`Response status: ${response.status}`);
+//     }
+
+//     const result = await response.json();
+//     console.log(result);
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+// }
