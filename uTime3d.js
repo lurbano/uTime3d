@@ -115,7 +115,7 @@ class ux3d {
         
         this.primitives[i].remove();
         this.primitives.splice(i, 1);
-        console.log("remove:", i, this.primitives.length)
+        
         // reindex
         let n = 0;
         for (let prim of this.primitives){

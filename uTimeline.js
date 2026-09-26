@@ -15,8 +15,7 @@ class uTimeline {
         }
         this.params = {...defaults, ...params};
 
-        console.log("timeline params:", this.params)
-
+        
         this.startTime = this.params.startTime;
         this.endTime = this.params.endTime;
         this.totalTimePeriod = this.endTime - this.startTime;
@@ -53,6 +52,8 @@ class uTimeline {
         if (this.draw3dMap) {
             this.timeline3d = new timeline3dModel({
                 timeline: this,
+                maxBarLength: 24*0.3048, //makerspace timeline=24'
+                panelLength: 24*0.3048, //makerspace timeline=24'
                 divId: this.params.draw3dElementId
             })
         }
@@ -81,9 +82,7 @@ class uTimeline {
         //load periods
         this.periodsList = [];
         for (let period of data.periods){
-            console.log("Add period:", period)
             this.addPeriod(period);
-
         }
 
         //remove events
@@ -557,13 +556,13 @@ class uTimeline {
             //console.log("Response", response);
             
             if (response.ok) {
-                console.log("Response:", response);
+                //console.log("Response:", response);
                 alert('Load from server successful!');
             }
 
             const data = await response.json();
 
-            console.log("Response JSON:", data['result'])
+            //console.log("Response JSON:", data['result'])
 
             this.loadTimeline(data['result']);
 
@@ -1104,7 +1103,7 @@ class timeline3dModel{
             maxBarLength: 10, // hall length
             xOffset: -1.7, //left shift (-)
             yOffset: 1.5, //height
-            panelHeight: 0.6,
+            panelHeight: 0.4,
             panelLength: 10,
             panelWidth: 0.1,
             //barHeight: 20,
@@ -1124,6 +1123,7 @@ class timeline3dModel{
         this.hallLength = this.params.panelLength + 1;
 
         //panel prameters
+        this.panels = [];
         this.panelLength = this.params.panelLength;
         this.panelHeight = this.params.panelHeight;
         this.panelHeight = this.params.panelHeight;
@@ -1144,7 +1144,7 @@ class timeline3dModel{
         
         this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
         this.leftWall.setColor(100,0,100);
-        this.leftWall.translate(-1.75,1.5,0);
+        this.leftWall.translate(-this.hallWidth/2,1.5,0);
         this.u3dModel.add(this.leftWall);
 
         // View down hallway
@@ -1189,7 +1189,7 @@ class timeline3dModel{
                 this.u3dModel.removeByIndex(period.panel.index);
             }
 
-            this.addPanel(period)
+            this.addPanel({period: period, offset: i});
 
             if (i !== 0) period.panel.setColor(100,0,0);
         }
@@ -1201,19 +1201,22 @@ class timeline3dModel{
 
     // }
 
-    addPanel(period){
-        //console.log(xPos, zPos);
+    addPanel({period, offset=0}){
+        //console.log("offset:", offset);
 
         
 
         let x = this.panel_xOffset;
-        let y = this.panelElevation;
+        let y = this.panelElevation-(offset)*this.panelHeight;
 
-        let z = (this.panelLength/2) - this.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
+        //let z = (this.panelLength/2) - this.timeline.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
+        let z = this.zOffset_3d(period.startTime,this.panelLength)
 
         let dt = period.endTime - period.startTime;
 
-        let panelLength = this.scaleTime(dt, this.panelLength);
+        //console.log("scale", period.description, period.endTime, period.startTime, dt, this.panelLength);
+        let panelLength = this.timeline.scaleTime(dt, this.panelLength);
+        //console.log(panelLength);
 
         //offset main timeline a little
         if (period.id === "fullTime") x-=0.01;
@@ -1243,6 +1246,11 @@ class timeline3dModel{
 
         let factor = Math.abs(t)/totalTime;
         return maxLength * factor;
+    }
+
+    zOffset_3d(t, maxLength){
+        let zOffset = -this.panelLength/2;
+        return zOffset + this.scaleTime(t-this.timeline.startTime, maxLength);
     }
 
 
