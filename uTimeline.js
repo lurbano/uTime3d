@@ -1359,7 +1359,7 @@ class x3dTimeline{
             hallWidth: 4,
             hallLength: 10, // main panel length
             wallThickness: 0.1,
-            panelHeight: 0.4,
+            panelHeight: 0.2,
             panelThickness: 0.1
         }
         this.params = {...defaults, ...params};
@@ -1388,6 +1388,10 @@ class x3dTimeline{
         this.hallHeight = this.params.hallHeight;
         this.hallLength = this.params.hallLength;
         this.wallThickness = this.params.wallThickness;
+        this.panelHeight = this.params.panelHeight;
+
+        this.eventMarkers = [];
+        this.periodPanels = [];
 
         //panels
         this.panels = [];
@@ -1414,7 +1418,7 @@ class x3dTimeline{
             centerofrotation: `0,0,${this.hallLength/2}`, //"-2,1.5,0",
             fieldofview: "0.78540"
         }, true, "general");
-        
+
 
         this.update();
 
@@ -1422,7 +1426,7 @@ class x3dTimeline{
 
 
     update(){
-        this.u3dModel.clear();
+        this.u3dModel.clearPrimitives();
 
 
         // floor
@@ -1441,15 +1445,49 @@ class x3dTimeline{
 
         this.zeroMarker = this.u3dModel.addSphere(0.125);
         this.zeroMarker.setColor(0,200,0);
-
-        // clear viewpoints
-        //this.x3dModel.clearViewpointButtonArea();
-
-        
+        this.zeroMarker.translate(0,0,this.scaleTime(0));
 
 
-        //add
 
+        //add event markers
+        console.log("Adding 3d event markers", this.timeline.eventsList);
+        for (let event of this.timeline.eventsList){
+            event.marker3d = this.u3dModel.addBox(0.1, 0.1, 0.1)
+            this.eventMarkers.push(event.marker3d);
+            let z = this.scaleTime(event.eventTime);
+            // console.log(event.eventTime, ":", event.description, z);
+            event.marker3d.translate(0,1.0,z);
+        }
+
+        //add panels
+        console.log("Adding Panels", this.timeline.eventsList);
+        for (let [i, period] of this.timeline.periodsList.entries()){
+            console.log(period.startTime, ":", period.description, period.endTime-period.startTime, this.timeline.totalTimePeriod);
+            let dt = period.endTime-period.startTime;
+            let length = this.hallLength * dt/this.timeline.totalTimePeriod;
+            period.panel3d = this.u3dModel.addBox(0.05, this.panelHeight, length);
+            let mid = (period.endTime + period.startTime) / 2;
+            period.panel3d.translate(i*0.1,this.hallHeight-i*this.panelHeight,this.scaleTime(mid));
+            console.log("panel:", this.hallLength, length)
+
+            //add image
+            if (period.visualMediaLink){
+                period.panel3d.addTexture(period.visualMediaLink);
+            }
+            
+            //add link
+            if (period.link2d){
+                console.log("Adding 3d link:", period.link2d)
+                period.panel3d.addLink(period.link2d);
+            }
+        }
+
+
+    }
+
+
+    scaleTime(t){ // get z value in the hallway for a given time
+        return this.hallLength * (this.timeline.endTime - t)/(this.timeline.totalTimePeriod);
     }
 
 

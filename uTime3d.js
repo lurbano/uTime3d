@@ -51,6 +51,12 @@ class ux3d {
     clear(){
         //this.elem.innerHTML = "";
     }
+
+    clearPrimitives(){
+        for (let p of this.primitives){
+            p.remove();
+        }
+    }
     
     clearViewpointButtonArea(){
         this.viewpointButtonArea.innerHTML = "";
