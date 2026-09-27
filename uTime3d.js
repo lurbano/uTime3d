@@ -17,6 +17,7 @@ class ux3d {
             width: "400px",
             height: "500px",
             l_openscad: true,
+            viewpointButtonAreaId: ""
         }
 
         this.params = {...defaults, ...params};
@@ -43,23 +44,37 @@ class ux3d {
 
         this.addViewpointButtonArea();
 
-        this.setNavigationMode("walk");
+        this.setNavigationMode("Look-Around");
 
     }
 
+    clear(){
+        //this.elem.innerHTML = "";
+    }
     
+    clearViewpointButtonArea(){
+        this.viewpointButtonArea.innerHTML = "";
+    }
 
     addViewpointButtonArea(){
 
-        this.viewpointButtonArea = document.getElementById("viewpointButtons");
-
-        if (this.viewpointButtonArea){
-            this.viewpointButtonArea.innerHTML = '';
-        } else {
+        if (this.params.viewpointButtonAreaId !== ""){
+            this.viewpointButtonArea = document.getElementById(this.params.viewpointButtonAreaId);
+            this.viewpointButtonArea.innerHTML = "";
+        } else {// add viewpoint area
             this.viewpointButtonArea = document.createElement("div");
-            this.viewpointButtonArea.setAttribute('id', "viewpointButtons");
-            this.hostDiv.before(this.viewpointButtonArea);
+            this.viewpointButtonArea.id = "ViewpointDiv";
+            this.hostDiv.prepend(this.viewpointButtonArea);
         }
+        
+
+        // if (this.viewpointButtonArea){
+        //     this.viewpointButtonArea.innerHTML = '';
+        // } else {
+        //     this.viewpointButtonArea = document.createElement("div");
+        //     this.viewpointButtonArea.setAttribute('id', "viewpointButtons");
+        //     this.hostDiv.before(this.viewpointButtonArea);
+        // }
         
 
         
@@ -73,12 +88,24 @@ class ux3d {
         this.vpAreas["panel"] = document.createElement("div");
         this.vpAreas["panel"].innerHTML = "panel";
         this.viewpointButtonArea.appendChild(this.vpAreas["panel"]);
+
+        // this.addViewpoint({
+        //     description: "startView",
+        //     position: "1, 1.5, 12",
+        //     orientation: "0,1,0,0.2",
+        //     centerofrotation: "-1,1.5,0",
+        //     fieldofview: "0.78540"
+        // }, true, "general");
+
+        // this.addViewpoint({
+        //     description: "perpView",
+        //     position: "12.5, 1.5, 0",
+        //     orientation: "0,1,0,1.57",
+        //     centerofrotation: "-2,1.5,0",
+        //     fieldofview: "0.78540"
+        // }, true, "general");
     }
 
-    // insertInto(hostDivId){
-    //     this.hostDiv = document.getElementById(hostDivId);
-    //     this.hostDiv.appendChild(this.elem);
-    // }
 
     addViewpoint(params={}, addButton=false, buttonDiv="general"){
         let defaults = {
@@ -205,6 +232,22 @@ class ux3d {
         }
         console.log("OpenScad:", scadString);
         return scadString;
+    }
+
+    addBox(x=1,y=1,z=1){
+        let box = new uBox({
+            size: `${x} ${y} ${z}`
+        })
+        this.add(box);
+        return box;
+    }
+
+    addSphere(radius=1){
+        let sphere = new uSphere({
+            radius: `${radius}`
+        })
+        this.add(sphere);
+        return sphere;
     }
 }
 

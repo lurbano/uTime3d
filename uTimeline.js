@@ -50,11 +50,15 @@ class uTimeline {
         }
 
         if (this.draw3dMap) {
-            this.timeline3d = new timeline3dModel({
+            // this.timeline3d = new timeline3dModel({
+            //     timeline: this,
+            //     panelLength: 24*0.3048, //makerspace timeline=24'
+            //     divId: this.params.draw3dElementId
+            // })
+            this.timeline3d = new x3dTimeline({
                 timeline: this,
-                maxBarLength: 24*0.3048, //makerspace timeline=24'
-                panelLength: 24*0.3048, //makerspace timeline=24'
-                divId: this.params.draw3dElementId
+                divId: this.params.draw3dElementId,
+                hallLength: 24*0.3048, //makerspace timeline=24'
             })
         }
 
@@ -603,7 +607,7 @@ class uTimeline {
         
         this.updateControls();
         this.update2dMap();
-        this.update3d();
+        //this.update3d();
 
         
     }
@@ -1097,10 +1101,9 @@ class timeline3dModel{
         let defaults = {
             timeline: "",
             divId: "",
-            hallHeight: 2.5,
+            hallHeight: 3,
             hallWidth: 3.75,
             wallWidth: 0.2,
-            maxBarLength: 10, // hall length
             xOffset: -1.7, //left shift (-)
             yOffset: 1.5, //height
             panelHeight: 0.4,
@@ -1113,6 +1116,7 @@ class timeline3dModel{
         this.params = {...defaults, ...params};
 
         this.element = document.getElementById(this.params.divId);
+        //this.element.innerHTML = "";
         this.element.style.border = '1px solid green'
 
         // ease of use variable names
@@ -1120,12 +1124,11 @@ class timeline3dModel{
 
         this.hallHeight = this.params.hallHeight;
         this.hallWidth = this.params.hallWidth;
-        this.hallLength = this.params.panelLength + 1;
+        this.hallLength = this.params.panelLength ;
 
         //panel prameters
         this.panels = [];
         this.panelLength = this.params.panelLength;
-        this.panelHeight = this.params.panelHeight;
         this.panelHeight = this.params.panelHeight;
         this.panelWidth = this.params.panelWidth;
         this.panelElevation = 1.5; //height above floor
@@ -1138,7 +1141,7 @@ class timeline3dModel{
         });
 
         //floor and wall
-        this.floor = addBox(this.hallWidth,0.5,this.hallLength);
+        this.floor = addBox(this.hallWidth,0.25,this.hallLength);
         this.floor.setColor(0, 0, 200);
         this.u3dModel.add(this.floor);
         
@@ -1146,6 +1149,13 @@ class timeline3dModel{
         this.leftWall.setColor(100,0,100);
         this.leftWall.translate(-this.hallWidth/2,1.5,0);
         this.u3dModel.add(this.leftWall);
+
+        //zero
+        this.zeroMarker = addBox(0.1, 0.1, 0.1);
+        let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
+        console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
+        this.zeroMarker.translate(0, 1, z_zero);
+        this.u3dModel.add(this.zeroMarker);
 
         // View down hallway
         this.u3dModel.addViewpoint({
@@ -1182,12 +1192,36 @@ class timeline3dModel{
     }
 
     update(){
+
+        //zero
+        this.zeroMarker.remove();
+        this.zeroMarker = addBox(0.1, 0.1, 0.1);
+        let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
+        console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
+        this.zeroMarker.translate(0, 1, z_zero);
+        this.zeroMarker.setColor(0, 100, 20);
+        this.u3dModel.add(this.zeroMarker);
+
+        // add event markers
+        console.log("adding 3d event markers")
+        for (let [i, event] of this.timeline.eventsList.entries()){
+            console.log("E:", event.description, event.eventTime);
+            if (event.marker3D === undefined){
+                event.marker3D = addBox(0.1,0.1,0.1);
+                let z =  - (event.eventTime*this.panelLength/this.timeline.totalTimePeriod);
+                console.log("z:",z)
+                event.marker3D.translate(0,1,z);
+                this.u3dModel.add(event.marker3D);
+            }
+        }
+
+
         //delete old panels
         for (let [i, period] of this.timeline.periodsList.entries()) {
             
-            if (period.panel){
-                this.u3dModel.removeByIndex(period.panel.index);
-            }
+            // if (period.panel){
+            //     this.u3dModel.removeByIndex(period.panel.index);
+            // }
 
             this.addPanel({period: period, offset: i});
 
@@ -1210,16 +1244,28 @@ class timeline3dModel{
         let y = this.panelElevation-(offset)*this.panelHeight;
 
         //let z = (this.panelLength/2) - this.timeline.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
-        let z = this.zOffset_3d(period.startTime,this.panelLength)
-
         let dt = period.endTime - period.startTime;
-
-        //console.log("scale", period.description, period.endTime, period.startTime, dt, this.panelLength);
         let panelLength = this.timeline.scaleTime(dt, this.panelLength);
+
+        console.log(period.description, this.panelLength);
+        let t_mid = (period.endTime+period.startTime)/2;
+        let T_mid = (this.timeline.endTime+this.timeline.startTime)/2;
+        let t_shift = t_mid - T_mid;
+        let df = -t_mid/this.timeline.totalTimePeriod;
+        let z = df * this.panelLength;
+        console.log("z:", dt, t_mid, df, z);
+
+        //let z = this.zOffset_3d(period.startTime,this.panelLength) + panelLength/2;
+
+        
+        //console.log("scale", period.description, period.endTime, period.startTime, dt, this.panelLength);
         //console.log(panelLength);
 
         //offset main timeline a little
-        if (period.id === "fullTime") x-=0.01;
+        if (period.id === "fullTime") {
+            x-=0.01;
+            z = 0;
+        }
 
         let panel = addBox(this.panelWidth, this.panelHeight, panelLength);
         panel.setColor(200,200,200);
@@ -1250,7 +1296,12 @@ class timeline3dModel{
 
     zOffset_3d(t, maxLength){
         let zOffset = -this.panelLength/2;
-        return zOffset + this.scaleTime(t-this.timeline.startTime, maxLength);
+        let stf = (t-this.timeline.startTime)/this.timeline.totalTimePeriod;
+        let st = stf * maxLength;
+        let zc = st + zOffset;
+        // let dz = zOffset + this.scaleTime(t-this.timeline.startTime, maxLength);
+        console.log("panelLength", this.panelLength, zOffset, stf, st, zc)
+        return -zc;
     }
 
 
@@ -1297,3 +1348,110 @@ function parseInputYear(str){
 //     console.error(error.message);
 //   }
 // }
+
+
+class x3dTimeline{
+    constructor(params={}){
+        let defaults = {
+            timeline: "",
+            divId: "",
+            hallHeight: 3,
+            hallWidth: 4,
+            hallLength: 10, // main panel length
+            wallThickness: 0.1,
+            panelHeight: 0.4,
+            panelThickness: 0.1
+        }
+        this.params = {...defaults, ...params};
+
+        this.element = document.getElementById(this.params.divId);
+
+        //viewpoints area
+        this.viewpointDiv = document.createElement("div");
+        this.viewpointDiv.id = "ViewpointDiv";
+        this.viewpointDiv.style.width = "100%";
+        this.viewpointDiv.style.height = "4em";
+        this.viewpointDiv.style.backgroundColor = "yellow";
+        this.element.append(this.viewpointDiv);
+
+        //3d model spot
+        this.x3dDiv = document.createElement("div");
+        this.x3dDiv.id = "x3dDiv";
+        this.x3dDiv.style.width = 500;
+        this.x3dDiv.style.height = 500;
+        this.x3dDiv.style.border = "3px inset red";
+        this.element.append(this.x3dDiv);
+
+        //easy of use variable names
+        this.timeline = this.params.timeline;
+        this.hallWidth = this.params.hallWidth;
+        this.hallHeight = this.params.hallHeight;
+        this.hallLength = this.params.hallLength;
+        this.wallThickness = this.params.wallThickness;
+
+        //panels
+        this.panels = [];
+
+        this.u3dModel = new ux3d(this.x3dDiv.id, {
+            width: "100%",
+            height: "100%",
+            viewpointButtonAreaId: this.viewpointDiv.id
+        })
+
+        // viewpoints
+        this.u3dModel.addViewpoint({
+            description: "startView",
+            position: `${this.hallWidth/2}, ${this.hallHeight/2}, 12`, //"1, 1.5, 12",
+            orientation: "0,1,0,0.2",
+            centerofrotation: `0,0,${this.hallLength/2}`, //"-1,1.5,0",
+            fieldofview: "0.78540"
+        }, true, "general");
+
+        this.u3dModel.addViewpoint({
+            description: "perpView",
+            position: `${3*this.hallWidth}, ${this.hallHeight/2}, ${this.hallLength/2}`, //"12.5, 1.5, 0",
+            orientation: "0,1,0,1.57",
+            centerofrotation: `0,0,${this.hallLength/2}`, //"-2,1.5,0",
+            fieldofview: "0.78540"
+        }, true, "general");
+        
+
+        this.update();
+
+    }
+
+
+    update(){
+        this.u3dModel.clear();
+
+
+        // floor
+        // this.floor = addBox(this.hallWidth,this.wallThickness,this.hallLength);
+        // this.floor.translate(this.hallWidth/2, -this.wallThickness/2,this.hallLength/2)
+        // this.floor.setColor(0, 0, 200);
+        // this.u3dModel.add(this.floor);
+
+        this.floor = this.u3dModel.addBox(this.hallWidth,this.wallThickness,this.hallLength);
+        this.floor.translate(this.hallWidth/2, -this.wallThickness/2,this.hallLength/2)
+        this.floor.setColor(0, 0, 200);
+
+        this.wall = this.u3dModel.addBox(this.wallThickness, this.hallHeight, this.hallLength);
+        this.wall.translate(-this.wallThickness/2,this.hallHeight/2,this.hallLength/2);
+        this.wall.setColor(245,240,160);
+
+        this.zeroMarker = this.u3dModel.addSphere(0.125);
+        this.zeroMarker.setColor(0,200,0);
+
+        // clear viewpoints
+        //this.x3dModel.clearViewpointButtonArea();
+
+        
+
+
+        //add
+
+    }
+
+
+
+}
