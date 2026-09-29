@@ -1096,216 +1096,216 @@ class timelinePeriod {
 
 
 
-class timeline3dModel{
-    constructor(params={}){
-        let defaults = {
-            timeline: "",
-            divId: "",
-            hallHeight: 3,
-            hallWidth: 3.75,
-            wallWidth: 0.2,
-            xOffset: -1.7, //left shift (-)
-            yOffset: 1.5, //height
-            panelHeight: 0.4,
-            panelLength: 10,
-            panelWidth: 0.1,
-            //barHeight: 20,
-            //barGap: 5,
-            eventTagWidth: 20
-        }
-        this.params = {...defaults, ...params};
+// class timeline3dModel{
+//     constructor(params={}){
+//         let defaults = {
+//             timeline: "",
+//             divId: "",
+//             hallHeight: 3,
+//             hallWidth: 3.75,
+//             wallWidth: 0.2,
+//             xOffset: -1.7, //left shift (-)
+//             yOffset: 1.5, //height
+//             panelHeight: 0.4,
+//             panelLength: 10,
+//             panelWidth: 0.1,
+//             //barHeight: 20,
+//             //barGap: 5,
+//             eventTagWidth: 20
+//         }
+//         this.params = {...defaults, ...params};
 
-        this.element = document.getElementById(this.params.divId);
-        //this.element.innerHTML = "";
-        this.element.style.border = '1px solid green'
+//         this.element = document.getElementById(this.params.divId);
+//         //this.element.innerHTML = "";
+//         this.element.style.border = '1px solid green'
 
-        // ease of use variable names
-        this.timeline = this.params.timeline;
+//         // ease of use variable names
+//         this.timeline = this.params.timeline;
 
-        this.hallHeight = this.params.hallHeight;
-        this.hallWidth = this.params.hallWidth;
-        this.hallLength = this.params.panelLength ;
+//         this.hallHeight = this.params.hallHeight;
+//         this.hallWidth = this.params.hallWidth;
+//         this.hallLength = this.params.panelLength ;
 
-        //panel prameters
-        this.panels = [];
-        this.panelLength = this.params.panelLength;
-        this.panelHeight = this.params.panelHeight;
-        this.panelWidth = this.params.panelWidth;
-        this.panelElevation = 1.5; //height above floor
-        this.panel_xOffset = -this.hallWidth/2+this.params.wallWidth;
+//         //panel prameters
+//         this.panels = [];
+//         this.panelLength = this.params.panelLength;
+//         this.panelHeight = this.params.panelHeight;
+//         this.panelWidth = this.params.panelWidth;
+//         this.panelElevation = 1.5; //height above floor
+//         this.panel_xOffset = -this.hallWidth/2+this.params.wallWidth;
 
-        // ux3d instance
-        this.u3dModel = new ux3d("x3Spot", {
-            width: "100%",
-            height: "100%"
-        });
+//         // ux3d instance
+//         this.u3dModel = new ux3d("x3Spot", {
+//             width: "100%",
+//             height: "100%"
+//         });
 
-        //floor and wall
-        this.floor = addBox(this.hallWidth,0.25,this.hallLength);
-        this.floor.setColor(0, 0, 200);
-        this.u3dModel.add(this.floor);
+//         //floor and wall
+//         this.floor = addBox(this.hallWidth,0.25,this.hallLength);
+//         this.floor.setColor(0, 0, 200);
+//         this.u3dModel.add(this.floor);
         
-        this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
-        this.leftWall.setColor(100,0,100);
-        this.leftWall.translate(-this.hallWidth/2,1.5,0);
-        this.u3dModel.add(this.leftWall);
+//         this.leftWall = addBox(this.params.wallWidth,this.hallHeight, this.hallLength);
+//         this.leftWall.setColor(100,0,100);
+//         this.leftWall.translate(-this.hallWidth/2,1.5,0);
+//         this.u3dModel.add(this.leftWall);
 
-        //zero
-        this.zeroMarker = addBox(0.1, 0.1, 0.1);
-        let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
-        console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
-        this.zeroMarker.translate(0, 1, z_zero);
-        this.u3dModel.add(this.zeroMarker);
+//         //zero
+//         this.zeroMarker = addBox(0.1, 0.1, 0.1);
+//         let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
+//         console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
+//         this.zeroMarker.translate(0, 1, z_zero);
+//         this.u3dModel.add(this.zeroMarker);
 
-        // View down hallway
-        this.u3dModel.addViewpoint({
-            id:"startView",
-            description: "startView",
-            orientation:"0,1,0,0.2",
-            position:"1, 1.5, 12",
-            fieldofview: "0.78540",
-            centerofrotation: "-1,1.5,0",
-            znear:"-1",
-            zfar:"-1"
-        }, true)
+//         // View down hallway
+//         this.u3dModel.addViewpoint({
+//             id:"startView",
+//             description: "startView",
+//             orientation:"0,1,0,0.2",
+//             position:"1, 1.5, 12",
+//             fieldofview: "0.78540",
+//             centerofrotation: "-1,1.5,0",
+//             znear:"-1",
+//             zfar:"-1"
+//         }, true)
         
-        // Perpendicular View
-        this.u3dModel.addViewpoint({
-            id:"PerpView",
-            description: "PerpView",
-            orientation:"0,1,0,1.57",
-            position:`${this.panelLength*1.25}, 1.5, 0`,
-            fieldofview: "0.78540",
-            centerofrotation: "-2,1.5,0",
-            znear:"-1",
-            zfar:"-1"
-        }, true)
+//         // Perpendicular View
+//         this.u3dModel.addViewpoint({
+//             id:"PerpView",
+//             description: "PerpView",
+//             orientation:"0,1,0,1.57",
+//             position:`${this.panelLength*1.25}, 1.5, 0`,
+//             fieldofview: "0.78540",
+//             centerofrotation: "-2,1.5,0",
+//             znear:"-1",
+//             zfar:"-1"
+//         }, true)
 
-        // add track lighting
-        this.u3dModel.addLight({
-            direction: "-1, -1, 0",
-            intensity: 0.5
-        })
+//         // add track lighting
+//         this.u3dModel.addLight({
+//             direction: "-1, -1, 0",
+//             intensity: 0.5
+//         })
 
-        this.update();
+//         this.update();
     
-    }
+//     }
 
-    update(){
+//     update(){
 
-        //zero
-        this.zeroMarker.remove();
-        this.zeroMarker = addBox(0.1, 0.1, 0.1);
-        let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
-        console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
-        this.zeroMarker.translate(0, 1, z_zero);
-        this.zeroMarker.setColor(0, 100, 20);
-        this.u3dModel.add(this.zeroMarker);
+//         //zero
+//         this.zeroMarker.remove();
+//         this.zeroMarker = addBox(0.1, 0.1, 0.1);
+//         let z_zero = (this.panelLength/2) + (this.timeline.startTime*this.panelLength/this.timeline.totalTimePeriod);
+//         console.log("z_zero", (this.panelLength/2), this.timeline.startTime, this.timeline.totalTimePeriod, (this.timeline.startTime/this.timeline.totalTimePeriod) ,z_zero)
+//         this.zeroMarker.translate(0, 1, z_zero);
+//         this.zeroMarker.setColor(0, 100, 20);
+//         this.u3dModel.add(this.zeroMarker);
 
-        // add event markers
-        console.log("adding 3d event markers")
-        for (let [i, event] of this.timeline.eventsList.entries()){
-            console.log("E:", event.description, event.eventTime);
-            if (event.marker3D === undefined){
-                event.marker3D = addBox(0.1,0.1,0.1);
-                let z =  - (event.eventTime*this.panelLength/this.timeline.totalTimePeriod);
-                console.log("z:",z)
-                event.marker3D.translate(0,1,z);
-                this.u3dModel.add(event.marker3D);
-            }
-        }
+//         // add event markers
+//         console.log("adding 3d event markers")
+//         for (let [i, event] of this.timeline.eventsList.entries()){
+//             console.log("E:", event.description, event.eventTime);
+//             if (event.marker3D === undefined){
+//                 event.marker3D = addBox(0.1,0.1,0.1);
+//                 let z =  - (event.eventTime*this.panelLength/this.timeline.totalTimePeriod);
+//                 console.log("z:",z)
+//                 event.marker3D.translate(0,1,z);
+//                 this.u3dModel.add(event.marker3D);
+//             }
+//         }
 
 
-        //delete old panels
-        for (let [i, period] of this.timeline.periodsList.entries()) {
+//         //delete old panels
+//         for (let [i, period] of this.timeline.periodsList.entries()) {
             
-            // if (period.panel){
-            //     this.u3dModel.removeByIndex(period.panel.index);
-            // }
+//             // if (period.panel){
+//             //     this.u3dModel.removeByIndex(period.panel.index);
+//             // }
 
-            this.addPanel({period: period, offset: i});
+//             this.addPanel({period: period, offset: i});
 
-            if (i !== 0) period.panel.setColor(100,0,0);
-        }
+//             if (i !== 0) period.panel.setColor(100,0,0);
+//         }
 
 
-    }
+//     }
 
-    // panelzOffset(period){
+//     // panelzOffset(period){
 
-    // }
+//     // }
 
-    addPanel({period, offset=0}){
-        //console.log("offset:", offset);
-
-        
-
-        let x = this.panel_xOffset;
-        let y = this.panelElevation-(offset)*this.panelHeight;
-
-        //let z = (this.panelLength/2) - this.timeline.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
-        let dt = period.endTime - period.startTime;
-        let panelLength = this.timeline.scaleTime(dt, this.panelLength);
-
-        console.log(period.description, this.panelLength);
-        let t_mid = (period.endTime+period.startTime)/2;
-        let T_mid = (this.timeline.endTime+this.timeline.startTime)/2;
-        let t_shift = t_mid - T_mid;
-        let df = -t_mid/this.timeline.totalTimePeriod;
-        let z = df * this.panelLength;
-        console.log("z:", dt, t_mid, df, z);
-
-        //let z = this.zOffset_3d(period.startTime,this.panelLength) + panelLength/2;
+//     addPanel({period, offset=0}){
+//         //console.log("offset:", offset);
 
         
-        //console.log("scale", period.description, period.endTime, period.startTime, dt, this.panelLength);
-        //console.log(panelLength);
 
-        //offset main timeline a little
-        if (period.id === "fullTime") {
-            x-=0.01;
-            z = 0;
-        }
+//         let x = this.panel_xOffset;
+//         let y = this.panelElevation-(offset)*this.panelHeight;
 
-        let panel = addBox(this.panelWidth, this.panelHeight, panelLength);
-        panel.setColor(200,200,200);
-        panel.translate(x,y, z);
+//         //let z = (this.panelLength/2) - this.timeline.scaleTime(this.timeline.totalTimePeriod + ( period.endTime + period.startTime)/2, this.panelLength);
+//         let dt = period.endTime - period.startTime;
+//         let panelLength = this.timeline.scaleTime(dt, this.panelLength);
 
-        //add image
-        if (period.visualMediaLink){
-            panel.addTexture(period.visualMediaLink);
-        }
+//         console.log(period.description, this.panelLength);
+//         let t_mid = (period.endTime+period.startTime)/2;
+//         let T_mid = (this.timeline.endTime+this.timeline.startTime)/2;
+//         let t_shift = t_mid - T_mid;
+//         let df = -t_mid/this.timeline.totalTimePeriod;
+//         let z = df * this.panelLength;
+//         console.log("z:", dt, t_mid, df, z);
+
+//         //let z = this.zOffset_3d(period.startTime,this.panelLength) + panelLength/2;
+
         
-        //add link
-        if (period.link2d){
-            console.log("Adding 3d link:", period.link2d)
-            panel.addLink(period.link2d);
-        }
+//         //console.log("scale", period.description, period.endTime, period.startTime, dt, this.panelLength);
+//         //console.log(panelLength);
+
+//         //offset main timeline a little
+//         if (period.id === "fullTime") {
+//             x-=0.01;
+//             z = 0;
+//         }
+
+//         let panel = addBox(this.panelWidth, this.panelHeight, panelLength);
+//         panel.setColor(200,200,200);
+//         panel.translate(x,y, z);
+
+//         //add image
+//         if (period.visualMediaLink){
+//             panel.addTexture(period.visualMediaLink);
+//         }
         
-        this.u3dModel.add(panel);
+//         //add link
+//         if (period.link2d){
+//             console.log("Adding 3d link:", period.link2d)
+//             panel.addLink(period.link2d);
+//         }
         
-        period.panel = panel;
-    }
+//         this.u3dModel.add(panel);
+        
+//         period.panel = panel;
+//     }
 
-    scaleTime(t, maxLength){
-        let totalTime = this.timeline.totalTimePeriod;
+//     scaleTime(t, maxLength){
+//         let totalTime = this.timeline.totalTimePeriod;
 
-        let factor = Math.abs(t)/totalTime;
-        return maxLength * factor;
-    }
+//         let factor = Math.abs(t)/totalTime;
+//         return maxLength * factor;
+//     }
 
-    zOffset_3d(t, maxLength){
-        let zOffset = -this.panelLength/2;
-        let stf = (t-this.timeline.startTime)/this.timeline.totalTimePeriod;
-        let st = stf * maxLength;
-        let zc = st + zOffset;
-        // let dz = zOffset + this.scaleTime(t-this.timeline.startTime, maxLength);
-        console.log("panelLength", this.panelLength, zOffset, stf, st, zc)
-        return -zc;
-    }
+//     zOffset_3d(t, maxLength){
+//         let zOffset = -this.panelLength/2;
+//         let stf = (t-this.timeline.startTime)/this.timeline.totalTimePeriod;
+//         let st = stf * maxLength;
+//         let zc = st + zOffset;
+//         // let dz = zOffset + this.scaleTime(t-this.timeline.startTime, maxLength);
+//         console.log("panelLength", this.panelLength, zOffset, stf, st, zc)
+//         return -zc;
+//     }
 
 
-}
+// }
 
 // class panel3d {
 //     constructor(params={}){
@@ -1467,7 +1467,7 @@ class x3dTimeline{
             let length = this.hallLength * dt/this.timeline.totalTimePeriod;
             period.panel3d = this.u3dModel.addBox(0.05, this.panelHeight, length);
             let mid = (period.endTime + period.startTime) / 2;
-            period.panel3d.translate(i*0.1,this.hallHeight-i*this.panelHeight,this.scaleTime(mid));
+            period.panel3d.translate(i*0.1,this.hallHeight-1-i*this.panelHeight,this.scaleTime(mid));
             console.log("panel:", this.hallLength, length)
 
             //add image
@@ -1480,6 +1480,11 @@ class x3dTimeline{
                 console.log("Adding 3d link:", period.link2d)
                 period.panel3d.addLink(period.link2d);
             }
+
+            //add label
+            // let label = this.u3dModel.addText(period.description);
+            // label.translate(1+i*0.1,this.hallHeight-1-i*this.panelHeight,this.scaleTime(mid));
+            // console.log("label:", label);
         }
 
 

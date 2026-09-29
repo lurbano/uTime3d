@@ -255,6 +255,14 @@ class ux3d {
         this.add(sphere);
         return sphere;
     }
+
+    addText(str="Hi"){
+        let text = new uText({
+            text: `${str}`
+        })
+        this.add(text);
+        return text;
+    }
 }
 
 // Note: all objects added need an .assemble() method like box.assemble()
@@ -906,6 +914,33 @@ class uSphere extends uPrimitive{
         scadStr += `\n sphere( r = ${r});`
 
         return scadStr;
+
+    }
+
+}
+
+class uText extends uPrimitive{
+    constructor(params={}){
+        let defaults = {
+            solid: true,
+            lit: true,
+            text: "Hello Doc",
+            maxExtent: "10"
+        }
+        params = {...defaults, ...params};
+
+        super(params, "text");
+    }
+
+    toOpenSCAD(scale){
+        // let scadStr = "";
+
+        // //let dims = this.parse_X3DOM_vector("position", scale);
+
+        // let r = parseFloat(this.div.getAttribute("radius")) * scale;
+        // scadStr += `\n sphere( r = ${r});`
+
+        // return scadStr;
 
     }
 
