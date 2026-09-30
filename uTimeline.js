@@ -143,7 +143,7 @@ class uTimeline {
     add2dMap(params={}){
         let defaults = {
             divId: "",
-            maxBarLength: 800,
+            maxBarLength: 1800,
             xOffset: 20,
             yOffset: 20, 
             barHeight: 20,
